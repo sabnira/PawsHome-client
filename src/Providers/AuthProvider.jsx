@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, FacebookAuthProvider, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import { auth } from "../firebase/firebase.config";
@@ -14,6 +14,7 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     const googleProvider = new GoogleAuthProvider()
+    const facebookProvider = new FacebookAuthProvider();
     const axiosPublic = useAxiosPublic()
 
 
@@ -30,6 +31,11 @@ const AuthProvider = ({ children }) => {
     const signInWithGoogle = () => {
         setLoading(true)
         return signInWithPopup(auth, googleProvider)
+    }
+
+    const signInWithFacebook = () => {
+        setLoading(true)
+        return signInWithPopup(auth, facebookProvider)
     }
 
     const logOut = async () => {
@@ -50,22 +56,22 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
 
-            if(currentUser){
-                //get token and store client
-                const userInfo = { email: currentUser.email}
-                axiosPublic.post('jwt', userInfo)
-                .then(res => {
-                    if(res.data.token) {
-                        localStorage.setItem('access-token', res.data.token)
-                        setLoading(false)
-                    }
-                })
-            }
-            else{
-                //TODO: remove token (if token stored in the client side: local storage, caching, in memory)
-                localStorage.removeItem('access-token')
-                setLoading(false)
-            }
+            // if(currentUser){
+            //     //get token and store client
+            //     const userInfo = { email: currentUser.email}
+            //     axiosPublic.post('jwt', userInfo)
+            //     .then(res => {
+            //         if(res.data.token) {
+            //             localStorage.setItem('access-token', res.data.token)
+            //             setLoading(false)
+            //         }
+            //     })
+            // }
+            // else{
+
+            //     localStorage.removeItem('access-token')
+            //     setLoading(false)
+            // }
 
             // setLoading(false);
         })
@@ -83,6 +89,7 @@ const AuthProvider = ({ children }) => {
         createUser,
         signIn,
         signInWithGoogle,
+        signInWithFacebook,
         logOut,
         updateUserProfile
     }
