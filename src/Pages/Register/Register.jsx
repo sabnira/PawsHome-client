@@ -9,7 +9,8 @@ import { AuthContext } from "../../providers/AuthProvider";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import SocialLogin from "../../components/SocialLogin";
-import dogImg from "../../assets/dog.png";
+// import dogImg from "../../assets/dog.png";
+import petImg from "../../assets/pet.png";
 
 
 const Register = () => {
@@ -74,10 +75,10 @@ const Register = () => {
                 {/* left panel */}
                 <div className="hidden md:flex flex-col justify-between w-1/2 bg-[#EEEDF8] px-12 py-12">
                     <div>
-                        <h1 className="text-3xl font-bold text-[#3C3489] mb-3">
+                        <h1 className="text-3xl font-bold text-[#302a6b] mb-3">
                             Join PawsHome
                         </h1>
-                        <p className="text-[#534AB7] text-sm leading-relaxed max-w-xs">
+                        <p className="text-[#433c93] text-sm leading-relaxed max-w-xs">
                             Create an account to start adopting and helping pets in need.
                         </p>
                     </div>
@@ -88,7 +89,7 @@ const Register = () => {
                             src={registerAnim}
                             className="w-72 h-72"
                         /> */}
-                        <img className="w-40 h-40" src={dogImg} alt="dog" />
+                        <img className="w-40 h-40" src={petImg} alt="dog" />
                     </div>
                 </div>
 

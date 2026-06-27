@@ -1,6 +1,10 @@
 import { Link, NavLink } from "react-router-dom";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { FaPaw } from "react-icons/fa";
+import { useContext } from "react";
+
+import { CgProfile } from "react-icons/cg";
+import { AuthContext } from "../../../providers/AuthProvider";
 
 
 const navLinks = [
@@ -10,8 +14,11 @@ const navLinks = [
 ]
 
 const Navbar = () => {
+
+    const { user, logOut } = useContext(AuthContext);
+
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar bg-base-100">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -34,7 +41,7 @@ const Navbar = () => {
                     <FaPaw></FaPaw>
                     PawsHome
                 </a>
-                
+
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -47,7 +54,7 @@ const Navbar = () => {
                     ))}
                 </ul>
             </div>
-            <div className="navbar-end gap-2">
+            <div className="navbar-end gap-6">
 
                 {/* Dark mode */}
                 <label className="swap swap-rotate">
@@ -60,9 +67,63 @@ const Navbar = () => {
                 </label>
 
 
-                <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
+                {
+                    user ?
+                        <>
+                            <div className="dropdown dropdown-end">
 
-                <Link to="/register" className="btn bg-emerald-500 hover:bg-emerald-600 text-white btn-sm border-none">Register</Link>
+                                <div tabIndex={0} role="button" className="m-2">
+                                    <div className="w-5 h-5 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-green-400 shadow-[0_0_15px_rgba(59,130,246,0.8)]">
+                                        {user?.photoURL ? (
+                                            <img
+                                                referrerPolicy='no-referrer'
+                                                className="w-full h-full object-cover"
+                                                src={user.photoURL}
+                                                alt="User Profile"
+                                            />
+                                        ) : (
+                                            <CgProfile className="w-full h-full" />
+                                        )}
+                                    </div>
+                                </div>
+
+                                <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-56 p-4 shadow-sm ">
+
+                                    <div className=" flex text-center items-center gap-3">
+                                        <div className="w-5 h-5 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-green-400 shadow-[0_0_15px_rgba(59,130,246,0.8)]">
+                                            {user?.photoURL ? (
+                                                <img
+                                                    referrerPolicy='no-referrer'
+                                                    className="w-full h-full object-cover"
+                                                    src={user.photoURL}
+                                                    alt="User Profile"
+                                                />
+                                            ) : (
+                                                <CgProfile className="w-full h-full" />
+                                            )}
+                                        </div>
+
+                                        <p>{user?.displayName}</p>
+                                    </div>
+
+                                    <Link to="/dashboard" className="btn btn-ghost btn-md my-2">
+                                        Dashboard
+                                    </Link>
+
+                                    <button onClick={logOut} className="btn bg-emerald-500 hover:bg-emerald-600 text-white btn-md border-none">
+                                        Logout
+                                    </button>
+
+                                </ul>
+                            </div>
+                        </>
+                        :
+                        <>
+
+                            <Link to="/login" className="btn bg-emerald-500 hover:bg-emerald-600 text-white btn-sm border-none">Login</Link>
+                        </>
+                }
+
             </div>
         </div>
     );
