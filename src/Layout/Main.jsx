@@ -11,7 +11,10 @@ const Main = () => {
 
     return (
         <div>
-            {noHeaderFooter || <Navbar></Navbar>}
+            <div className='max-w-7xl mx-auto'> 
+                {noHeaderFooter || <Navbar></Navbar>}
+            </div>
+
             <div className="min-h-[calc(100vh-68px)]">
                 <Outlet></Outlet>
             </div>

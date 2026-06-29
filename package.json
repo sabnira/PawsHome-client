@@ -16,6 +16,7 @@
     "axios": "^1.17.0",
     "firebase": "^12.14.0",
     "jsonwebtoken": "^9.0.3",
+    "keen-slider": "^6.8.6",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.1",
     "match-sorter": "^8.3.0",
