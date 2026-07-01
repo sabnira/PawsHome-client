@@ -1,7 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { FaPaw } from "react-icons/fa";
-import { useContext } from "react";
+import { MdArrowDropDown} from "react-icons/md";
+import { useContext} from "react";
 
 import { CgProfile } from "react-icons/cg";
 import { AuthContext } from "../../../providers/AuthProvider";
@@ -37,8 +38,8 @@ const Navbar = () => {
                     </ul>
                 </div>
 
-                <a className="btn btn-ghost text-xl">
-                    <FaPaw></FaPaw>
+                <a className="btn btn-ghost text-2xl font-berkshire">
+                    <FaPaw className="text-green-500"></FaPaw>
                     PawsHome
                 </a>
 
@@ -46,15 +47,15 @@ const Navbar = () => {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                     {navLinks.map(({ to, label }) => (
-                        <li key={to}>
-                            <NavLink to={to} className={({ isActive }) => isActive ? "font-medium text-emerald-600" : ""}>
+                        <li key={to} className="text-lg font-bold">
+                            <NavLink to={to} className={({ isActive }) => isActive ? " text-green-500 mr-2" : "mr-2"}>
                                 {label}
                             </NavLink>
                         </li>
                     ))}
                 </ul>
             </div>
-            <div className="navbar-end gap-6">
+            <div className="navbar-end gap-2 lg:gap-6">
 
                 {/* Dark mode */}
                 <label className="swap swap-rotate">
@@ -72,25 +73,30 @@ const Navbar = () => {
                         <>
                             <div className="dropdown dropdown-end">
 
-                                <div tabIndex={0} role="button" className="m-2">
-                                    <div className="w-5 h-5 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-green-400 shadow-[0_0_15px_rgba(59,130,246,0.8)]">
-                                        {user?.photoURL ? (
-                                            <img
-                                                referrerPolicy='no-referrer'
-                                                className="w-full h-full object-cover"
-                                                src={user.photoURL}
-                                                alt="User Profile"
-                                            />
-                                        ) : (
-                                            <CgProfile className="w-full h-full" />
-                                        )}
+                                <div tabIndex={0} role="button" className="m-2 px-6 py-2 rounded-4xl border-2 border-gray-300">
+                                    <div className="flex items-end">
+                                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-3xl overflow-hidden ring-2 ring-green-400 shadow-[0_0_15px_rgba(59,130,246,0.8)]">
+                                            {user?.photoURL ? (
+                                                <img
+                                                    referrerPolicy='no-referrer'
+                                                    className="w-full h-full object-cover"
+                                                    src={user.photoURL}
+                                                    alt="User Profile"
+                                                />
+                                            ) : (
+                                                <CgProfile className="w-full h-full" />
+                                            )}
+                                        </div>
+
+                                        <MdArrowDropDown className="text-2xl text-black"></MdArrowDropDown> 
+
                                     </div>
                                 </div>
 
                                 <ul tabIndex="-1" className="dropdown-content menu bg-base-200 rounded-box z-1 w-56 p-4 shadow-sm ">
 
                                     <div className=" flex text-center items-center gap-3 mb-2">
-                                        <div className="w-5 h-5 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-[#894B8D]">
+                                        <div className="w-7 h-7 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-green-400">
                                             {user?.photoURL ? (
                                                 <img
                                                     referrerPolicy='no-referrer'
@@ -108,11 +114,11 @@ const Navbar = () => {
 
                                     <div className="divider m-0"></div>
 
-                                    <Link to="/dashboard" className="btn btn-ghost btn-md my-2 rounded-4xl">
+                                    <Link to="/dashboard" className="btn btn-ghost btn-sm lg:btn-md my-2 rounded-4xl">
                                         Dashboard
                                     </Link>
 
-                                    <button onClick={logOut} className="btn bg-[#894B8D] hover:bg-[#002169] text-white btn-md border-none rounded-4xl">
+                                    <button onClick={logOut} className="btn bg-green-500 hover:bg-green-600 text-white btn-sm lg:btn-md border-none rounded-4xl">
                                         Logout
                                     </button>
 
@@ -122,7 +128,7 @@ const Navbar = () => {
                         :
                         <>
 
-                            <Link to="/login" className="btn bg-emerald-500 hover:bg-emerald-600 text-white btn-sm border-none">Login</Link>
+                            <Link to="/login" className="btn bg-green-500 hover:bg-green-600 text-white btn-sm border-none">Login</Link>
                         </>
                 }
 

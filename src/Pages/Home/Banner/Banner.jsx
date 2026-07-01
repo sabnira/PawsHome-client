@@ -27,55 +27,55 @@ const Banner = () => {
     }, [loaded, instanceRef])
 
     return (
-        <div className="w-full">
+        <div className="w-full text-black">
             <div
                 ref={sliderRef}
-                className="keen-slider h-150 rounded-xl overflow-hidden"
+                className="keen-slider h-80 md:h-150 rounded-xl overflow-hidden"
             >
 
                 {/* Slide 1 */}
-                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FFF4D6] px-6 lg:px-8">
+                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FFF4D6] px-10 mx-auto lg:px-8">
 
                     <div className="flex-1">
                         <h2 className="text-xl lg:text-6xl font-bold mb-6">
                             Embrace <br /> Compassion: Rescue a Pet, Change a Life!
                         </h2>
-                        <p className="text-xl">Make a difference in the world by opening your heart and home to a shelter animal.</p>
+                        <p className="text-xs lg:text-xl">Make a difference in the world by opening your heart and home to a shelter animal.</p>
                     </div>
 
-                    <div className="flex-1 flex justify-center">
+                    <div className="flex-1 flex justify-end">
                         <img src={banner1} className="w-full max-w-xl" alt="" />
                     </div>
                 </div>
 
 
                 {/* Slide 2 */}
-                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FBEDEC] px-6 lg:px-8">
+                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FBEDEC] px-10 lg:px-8">
 
                     <div className="flex-1">
                         <h2 className="text-xl lg:text-6xl font-bold mb-6">
                             Discover <br /> Unconditional Love: Adopt a Pet Today!
                         </h2>
-                        <p className="text-xl">Find your perfect companion and bring joy to your home by choosing adoption over buying.</p>
+                        <p className="text-xs lg:text-xl">Find your perfect companion and bring joy to your home by choosing adoption over buying.</p>
                     </div>
 
-                    <div className="flex-1 flex justify-center">
+                    <div className="flex-1 flex justify-end">
                         <img src={banner2} className="w-full max-w-xl" alt="" />
                     </div>
                 </div>
 
 
                 {/* Slide 3 */}
-                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FFFFFF] px-6 lg:px-8">
+                <div className="keen-slider__slide flex items-center justify-between gap-8 bg-[#FFFFFF] px-10 lg:px-8">
 
                     <div className="flex-1">
                         <h2 className="text-xl lg:text-6xl font-bold mb-6">
                             Transform <br /> Lives: Choose Adoption, Choose Love!
                         </h2>
-                        <p className="text-xl">Make a lasting impact by adopting a rescue pet and be a part of their incredible journey toward a brighter future. </p>
+                        <p className="text-xs lg:text-xl">Make a lasting impact by adopting a rescue pet and be a part of their incredible journey toward a brighter future. </p>
                     </div>
 
-                    <div className="flex-1 flex justify-center">
+                    <div className="flex-1 flex justify-end">
                         <img src={banner3} className="w-full max-w-xl" alt="" />
                     </div>
                 </div>
