@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "image": "https://images.unsplash.com/photo-1543466835-00a7907e9de1",
+    "name": "Max",
+    "age": "2 years",
+    "location": "Dhaka",
+    "price": 1500,
+    "gender": "Male",
+    "category": "Dog"
+  },
+  {
+    "id": 2,
+    "image": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
+    "name": "Luna",
+    "age": "1 year",
+    "location": "Chittagong",
+    "price": 1200,
+    "gender": "Female",
+    "category": "Cat"
+  },
+  {
+    "id": 3,
+    "image": "https://images.unsplash.com/photo-1425082661705-1834bfd09dca",
+    "name": "Charlie",
+    "age": "3 years",
+    "location": "Sylhet",
+    "price": 2000,
+    "gender": "Male",
+    "category": "Dog"
+  },
+  {
+    "id": 4,
+    "image": "https://images.unsplash.com/photo-1592194996308-7b43878e84a6",
+    "name": "Coco",
+    "age": "8 months",
+    "location": "Cox's Bazar",
+    "price": 800,
+    "gender": "Female",
+    "category": "Rabbit"
+  },
+  {
+    "id": 5,
+    "image": "https://images.unsplash.com/photo-1519052537078-e6302a4968d4",
+    "name": "Rocky",
+    "age": "4 years",
+    "location": "Rajshahi",
+    "price": 1800,
+    "gender": "Male",
+    "category": "Dog"
+  },
+  {
+    "id": 6,
+    "image": "https://images.unsplash.com/photo-1533738363-b7f9aef128ce",
+    "name": "Milo",
+    "age": "6 months",
+    "location": "Khulna",
+    "price": 1000,
+    "gender": "Male",
+    "category": "Cat"
+  },
+  {
+    "id": 7,
+    "image": "https://images.unsplash.com/photo-1452857297128-d9c29adba80b",
+    "name": "Bella",
+    "age": "2 years",
+    "location": "Barisal",
+    "price": 1600,
+    "gender": "Female",
+    "category": "Dog"
+  },
+  {
+    "id": 8,
+    "image": "https://images.unsplash.com/photo-1591160690555-5debfba289f0",
+    "name": "Kiwi",
+    "age": "1 year",
+    "location": "Mymensingh",
+    "price": 500,
+    "gender": "Female",
+    "category": "Bird"
+  }
+]

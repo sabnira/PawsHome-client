@@ -3,8 +3,15 @@ import { BiCategory } from "react-icons/bi";
 
 import listBanner from "../../assets/listBanner.png"
 
+import PetCart from "../../components/PetCart";
+
+
+
 const PetListing = () => {
+
+
     return (
+        <>
         <div className="bg-base-200 py-10 px-4 md:px-10">
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
 
@@ -79,14 +86,13 @@ const PetListing = () => {
 
                 {/* RIGHT IMAGE */}
                 <div className="relative flex justify-end">
-
-                    <img src={listBanner} alt=""  className="w-125"/>
-
-                  
+                    <img src={listBanner} alt="" className="w-125" />
                 </div>
 
             </div>
         </div>
+        <PetCart></PetCart>
+        </>
     );
 };
 
