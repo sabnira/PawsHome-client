@@ -11,7 +11,10 @@ const Home = () => {
                 <title>PawsHome | Home</title>
             </Helmet>
             <Banner></Banner>
-            <FeaturedPets></FeaturedPets>
+            <div className="max-w-7xl mx-auto">
+                <FeaturedPets></FeaturedPets>
+            </div>
+            
            
         </div>
     );

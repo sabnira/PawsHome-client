@@ -1,7 +1,7 @@
 import { Outlet, useLocation} from "react-router-dom";
 import Navbar from "../Pages/Shared/Navbar/Navbar";
 import Footer from "../Pages/Shared/Footer/Footer";
-
+import { ScrollRestoration } from "react-router-dom";
 
 
 const Main = () => {
@@ -17,6 +17,7 @@ const Main = () => {
 
             <div className="min-h-[calc(100vh-68px)]">
                 <Outlet></Outlet>
+                <ScrollRestoration />
             </div>
             {noHeaderFooter || <Footer></Footer>}
         </div>
