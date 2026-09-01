@@ -5,6 +5,7 @@ import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
 import PetListing from "../Pages/PetListing/PetListing";
+import PetDetails from "../Pages/PetDetails/PetDetails";
 
 
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: 'pet-listing',
                 element: <PetListing></PetListing>
+            },
+            {
+                path: 'pet-details',
+                element: <PetDetails></PetDetails>
             },
         ]
     },

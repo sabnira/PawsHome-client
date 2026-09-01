@@ -1,10 +1,12 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa6";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 
 const PetCart = ({ pet }) => {
 
-  const { name, image, age, location, price, gender, category} = pet;
+  const { _id, name, image, age, location, price, gender, category} = pet;
 
   return (
 
@@ -67,14 +69,15 @@ const PetCart = ({ pet }) => {
         </div>
 
         {/* Buttons */}
-        <button className="btn btn-outline btn-lg rounded-full border-gray-300">
+        <Link to="/pet-details" className="btn btn-outline btn-lg rounded-full border-gray-300">
           View Details <FaLongArrowAltRight />
-        </button>
+        </Link>
 
-        <button className="group btn btn-lg bg-warning text-black rounded-full border-none transition-all duration-300 ease-in-out hover:bg-warning/80">
+         <Link to={`/pet-details/${_id}`} 
+         className="group btn btn-lg bg-warning text-black rounded-full border-none transition-all duration-300 ease-in-out hover:bg-warning/80">
           Adopt Now
           <FaHeart className="text-red-500 transition-transform duration-400 group-hover:scale-140" />
-        </button>
+         </Link>
 
       </div>
     </div>
