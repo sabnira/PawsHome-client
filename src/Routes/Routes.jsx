@@ -33,7 +33,7 @@ const router = createBrowserRouter([
                 element: <PetListing></PetListing>
             },
             {
-                path: 'pet-details',
+                path: 'pet-details/:id',
                 element: <PetDetails></PetDetails>
             },
         ]

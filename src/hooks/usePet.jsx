@@ -7,7 +7,7 @@ const usePet = (id) => {
   const { data: pet = {}, isPending: loading, refetch } = useQuery({
     queryKey: ["pet", id],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/pets/${id}`);
+      const res = await axiosPublic.get(`/pet/${id}`);
       return res.data;
     },
     enabled: !!id,

@@ -69,7 +69,7 @@ const PetCart = ({ pet }) => {
         </div>
 
         {/* Buttons */}
-        <Link to="/pet-details" className="btn btn-outline btn-lg rounded-full border-gray-300">
+        <Link to={`/pet-details/${_id}`} className="btn btn-outline btn-lg rounded-full border-gray-300">
           View Details <FaLongArrowAltRight />
         </Link>
 
