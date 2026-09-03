@@ -1,13 +1,16 @@
 import { Link, useParams } from "react-router-dom";
 import usePet from "../../hooks/usePet";
-import { FaArrowLeft, FaMapMarkerAlt, FaHeart, FaPaw, FaCheckCircle} from "react-icons/fa";
+import { FaArrowLeft, FaMapMarkerAlt, FaHeart, FaPaw, FaCheckCircle } from "react-icons/fa";
 import Loading from "../../components/Loading";
+import { useContext } from "react";
+import { AuthContext } from "../../providers/AuthProvider";
 
 
 const PetDetails = () => {
 
     const { id } = useParams();
     const [pet, loading] = usePet(id);
+    const { user } = useContext(AuthContext);
 
     if (loading) {
         return <Loading></Loading>
@@ -188,7 +191,7 @@ const PetDetails = () => {
 
                     </div>
 
-                    {/* ================= RIGHT SIDE ================= */}
+                    {/* ===== RIGHT SIDE ==== */}
                     <div className="lg:sticky lg:top-6">
 
                         <div className="overflow-hidden rounded-[30px] border border-base-200 bg-base-100 shadow-xl shadow-base-content/5">
@@ -229,7 +232,7 @@ const PetDetails = () => {
                                         type="text"
                                         value={name}
                                         disabled
-                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/70"
+                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
                                     />
                                 </div>
 
@@ -241,8 +244,9 @@ const PetDetails = () => {
 
                                     <input
                                         type="text"
-                                        placeholder="Enter your name"
-                                        className="input input-bordered w-full rounded-xl focus:outline-warning"
+                                        value={user?.displayName}
+                                        disabled
+                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
                                     />
                                 </div>
 
@@ -254,8 +258,9 @@ const PetDetails = () => {
 
                                     <input
                                         type="email"
-                                        placeholder="you@example.com"
-                                        className="input input-bordered w-full rounded-xl focus:outline-warning"
+                                        value={user?.email}
+                                        disabled
+                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
                                     />
                                 </div>
 
