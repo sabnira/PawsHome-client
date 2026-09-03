@@ -2,8 +2,10 @@ import { Link, useParams } from "react-router-dom";
 import usePet from "../../hooks/usePet";
 import { FaArrowLeft, FaMapMarkerAlt, FaHeart, FaPaw, FaCheckCircle } from "react-icons/fa";
 import Loading from "../../components/Loading";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
+import { useForm } from "react-hook-form";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 
 const PetDetails = () => {
@@ -11,12 +13,44 @@ const PetDetails = () => {
     const { id } = useParams();
     const [pet, loading] = usePet(id);
     const { user } = useContext(AuthContext);
+    const [submitted, setSubmitted] = useState(false);
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const axiosPublic = useAxiosPublic();
 
     if (loading) {
         return <Loading></Loading>
     }
 
-    const { name, image, age, location, price, gender, category, description } = pet;
+    const { _id, name, image, age, location, price, gender, category, description } = pet;
+
+
+    const handleAdoption = async (formData) => {
+
+        const adoption = {
+            petId: _id,
+            petName: name,
+            petImage: image,
+            userName: user?.displayName,
+            userEmail: user?.email,
+            userNumber: formData.phoneNumber,
+            userAddress: formData.address,
+            status: "pending",
+            createdAt: new Date(),
+        };
+
+        try {
+            const res = await axiosPublic.post("/adoptions", adoption);
+
+            console.log(res.data);
+
+            setSubmitted(true);
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-base-100">
@@ -194,121 +228,172 @@ const PetDetails = () => {
                     {/* ===== RIGHT SIDE ==== */}
                     <div className="lg:sticky lg:top-6">
 
-                        <div className="overflow-hidden rounded-[30px] border border-base-200 bg-base-100 shadow-xl shadow-base-content/5">
+                        {submitted ? (
 
-                            {/* Form Header */}
-                            <div className="bg-warning/10 px-6 md:px-7 py-6">
+                            /* ===== SUCCESS SECTION ===== */
+                            <div className="rounded-[30px] border border-base-300 bg-base-200/80 p-4 md:p-6 text-center space-y-4">
 
-                                <div className="flex items-center justify-between gap-4">
-
-                                    <div>
-                                        <p className="text-xs font-semibold text-warning uppercase tracking-wider mb-1">
-                                            Make a difference
-                                        </p>
-
-                                        <h2 className="text-2xl font-bold">
-                                            Adopt {name}
-                                        </h2>
+                                {/* Success Icon */}
+                                <div className="flex justify-center ">
+                                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                                        <FaCheckCircle className="text-green-500 text-4xl" />
                                     </div>
-
-                                    <div className="w-11 h-11 rounded-full bg-warning flex items-center justify-center">
-                                        <FaHeart className="text-black" />
-                                    </div>
-
                                 </div>
+
+                                <h2 className="text-md md:text-2xl font-bold">
+                                    Request Sent Successfully
+                                </h2>
+
+                                <p className="text-base-content/70">
+                                    Your adoption request has been sent to the owner.
+                                    You'll get a response soon.
+                                </p>
 
                             </div>
 
-                            {/* Form */}
-                            <form className="p-6 md:p-7 space-y-4">
+                        ) : (
+                            <div className="overflow-hidden rounded-[30px] border border-base-200 bg-base-100 shadow-xl shadow-base-content/5">
 
-                                {/* Pet Name */}
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Pet Name
-                                    </label>
+                                {/* Form Header */}
+                                <div className="bg-warning/10 px-6 md:px-7 py-6">
 
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        disabled
-                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
-                                    />
+                                    <div className="flex items-center justify-between gap-4">
+
+                                        <div>
+                                            <p className="text-xs font-semibold text-warning uppercase tracking-wider mb-1">
+                                                Make a difference
+                                            </p>
+
+                                            <h2 className="text-2xl font-bold">
+                                                Adopt {name}
+                                            </h2>
+                                        </div>
+
+                                        <div className="w-11 h-11 rounded-full bg-warning flex items-center justify-center">
+                                            <FaHeart className="text-black" />
+                                        </div>
+
+                                    </div>
+
                                 </div>
 
-                                {/* User Name */}
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Your Name
-                                    </label>
+                                {/* Form */}
+                                <form
+                                    onSubmit={handleSubmit(handleAdoption)}
+                                    className="p-6 md:p-7 space-y-4">
 
-                                    <input
-                                        type="text"
-                                        value={user?.displayName}
-                                        disabled
-                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
-                                    />
-                                </div>
+                                    {/* Pet Name */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Pet Name
+                                        </label>
 
-                                {/* Email */}
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Email Address
-                                    </label>
+                                        <input
+                                            type="text"
+                                            value={name ?? ""}
+                                            disabled
+                                            className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
+                                        />
+                                    </div>
 
-                                    <input
-                                        type="email"
-                                        value={user?.email}
-                                        disabled
-                                        className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
-                                    />
-                                </div>
+                                    {/* User Name */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Your Name
+                                        </label>
 
-                                {/* Phone */}
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Phone Number
-                                    </label>
+                                        <input
+                                            type="text"
+                                             value={user?.displayName ?? ""}
+                                            disabled
+                                            className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
+                                        />
+                                    </div>
 
-                                    <input
-                                        type="tel"
-                                        placeholder="01XXXXXXXXX"
-                                        className="input input-bordered w-full rounded-xl focus:outline-warning"
-                                    />
-                                </div>
+                                    {/* Email */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Email Address
+                                        </label>
 
-                                {/* Address */}
-                                <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Your Address
-                                    </label>
+                                        <input
+                                            type="email"
+                                            value={user?.email ?? ""}
+                                            disabled
+                                            className="input w-full rounded-xl border-base-200 bg-base-200 disabled:text-base-content/80"
+                                        />
+                                    </div>
 
-                                    <textarea
-                                        rows="3"
-                                        placeholder="Where will your new friend live?"
-                                        className="textarea textarea-bordered w-full rounded-xl resize-none focus:outline-warning"
-                                    ></textarea>
-                                </div>
+                                    {/* Phone */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Phone Number
+                                        </label>
 
-                                {/* Submit */}
-                                <button
-                                    type="submit"
-                                    className="group btn w-full h-12 min-h-12 rounded-full bg-warning text-black border-none font-semibold mt-2 hover:bg-warning/90 transition-all duration-300"
-                                >
-                                    Send Adoption Request
+                                        <input
+                                            type="tel"
+                                            placeholder="01XXXXXXXXX"
+                                            {...register("phoneNumber", {
+                                                required: "Phone number is required",
+                                                pattern: {
+                                                    value: /^01[3-9]\d{8}$/,
+                                                    message: "Enter a valid Bangladeshi phone number",
+                                                },
+                                            })}
+                                            className="input input-bordered w-full rounded-xl focus:outline-warning"
+                                        />
 
-                                    <FaHeart className="text-red-500 transition-transform duration-300 group-hover:scale-110" />
-                                </button>
+                                        {errors.phoneNumber && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {errors.phoneNumber.message}
+                                            </p>
+                                        )}
+                                    </div>
 
-                                {/* Response */}
-                                <div className="flex items-center justify-center gap-2 pt-2 text-xs text-base-content/50">
-                                    <FaCheckCircle className="text-green-500" />
-                                    Usually responds within 24 hours
-                                </div>
+                                    {/* Address */}
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            Your Address
+                                        </label>
 
-                            </form>
+                                        <textarea
+                                            rows="3"
+                                            placeholder="Where will your new friend live?"
+                                            {...register("address", {
+                                                required: "Address is required",
+                                            })}
+                                            className="textarea textarea-bordered w-full rounded-xl resize-none focus:outline-warning"
+                                        ></textarea>
 
-                        </div>
+                                        {errors.address && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {errors.address.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* Submit */}
+                                    <button
+                                        type="submit"
+                                        className="group btn w-full h-12 min-h-12 rounded-full bg-warning text-black border-none font-semibold mt-2 hover:bg-warning/90 transition-all duration-300"
+                                    >
+                                        Send Adoption Request
+
+                                        <FaHeart className="text-red-500 transition-transform duration-300 group-hover:scale-110" />
+                                    </button>
+
+                                    {/* Response */}
+                                    <div className="flex items-center justify-center gap-2 pt-2 text-xs text-base-content/50">
+                                        <FaCheckCircle className="text-green-500" />
+                                        Usually responds within 24 hours
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        )}
+
+
 
                     </div>
 
