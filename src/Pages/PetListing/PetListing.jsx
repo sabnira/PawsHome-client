@@ -1,17 +1,20 @@
 import { FaSearch, FaDog, FaCat, FaPaw } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
-
 import listBanner from "../../assets/listBanner.png"
-
 import PetCart from "../../components/PetCart";
 import usePets from "../../hooks/usePets";
+import { useState } from "react";
 
 
 
 const PetListing = () => {
 
-    const [pets] = usePets();
+    const [searchText, setSearchText] = useState("");
+    const [searchParams, setSearchParams] = useState("");
+    const [category, setCategory] = useState("");
 
+    const [pets] = usePets(searchParams, category);
+    const [allPets] = usePets("", "");
 
     return (
         <>
@@ -34,25 +37,35 @@ const PetListing = () => {
                             {/* CATEGORY */}
                             <div className="flex items-center gap-2 bg-base-100 rounded-full px-4 border border-gray-300 w-full">
                                 <BiCategory className="text-[#224fb1]"></BiCategory>
-                                <select className="outline-none w-full bg-base-100">
-                                    <option>Select Category</option>
-                                    <option>Dogs</option>
-                                    <option>Cats</option>
-                                    <option>Birds</option>
-                                    <option>Rabbits</option>
-                                    <option>Others</option>
+                                <select
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="outline-none w-full bg-base-100">
+
+                                    <option value="">Select Category</option>
+                                    <option value="Dog">Dogs</option>
+                                    <option value="Cat">Cats</option>
+                                    <option value="Bird">Birds</option>
+                                    <option value="Rabbit">Rabbits</option>
+                                    <option value="Others">Others</option>
+
                                 </select>
                             </div>
 
                             {/* Input */}
                             <input
                                 type="text"
-                                placeholder="What are you looking for..."
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
+                                placeholder="Search pet by name..."
                                 className="input input-bordered w-full rounded-full"
                             />
 
                             {/* Button */}
-                            <button className="btn bg-green-500 text-white rounded-full px-6">
+                            <button
+                                type="button"
+                                onClick={() => setSearchParams(searchText)}
+                                className="btn bg-green-500 text-white rounded-full px-6">
                                 Search <FaSearch />
                             </button>
                         </div>
@@ -64,7 +77,9 @@ const PetListing = () => {
                                 <FaDog className="text-[#224fb1] text-xl" />
                                 <div>
                                     <p className="font-semibold">Dogs</p>
-                                    <p className="text-gray-500">(2,590)</p>
+                                    <p className="text-gray-500">
+                                        ({allPets.filter(pet => pet.category === "Dog").length})
+                                    </p>
                                 </div>
                             </div>
 
@@ -72,7 +87,9 @@ const PetListing = () => {
                                 <FaCat className="text-[#224fb1] text-xl" />
                                 <div>
                                     <p className="font-semibold">Cats</p>
-                                    <p className="text-gray-500">(1,217)</p>
+                                    <p className="text-gray-500">
+                                        ({allPets.filter(pet => pet.category === "Cat").length})
+                                    </p>
                                 </div>
                             </div>
 
@@ -80,7 +97,9 @@ const PetListing = () => {
                                 <FaPaw className="text-[#224fb1] text-xl" />
                                 <div>
                                     <p className="font-semibold">Others Pet</p>
-                                    <p className="text-gray-500">(1,120)</p>
+                                    <p className="text-gray-500">
+                                        ({allPets.filter(pet => pet.category !== "Cat" && pet.category !== "Dog").length})
+                                    </p>
                                 </div>
                             </div>
 
@@ -94,13 +113,15 @@ const PetListing = () => {
 
                 </div>
             </div>
-           
+
 
             <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 my-10">
                 {
                     pets.map(pet => <PetCart key={pet._id} pet={pet}></PetCart>)
                 }
             </div>
+
+     
         </>
     );
 };
