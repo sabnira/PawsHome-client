@@ -6,6 +6,7 @@ import Register from "../Pages/Register/Register";
 import Login from "../Pages/Login/Login";
 import PetListing from "../Pages/PetListing/PetListing";
 import PetDetails from "../Pages/PetDetails/PetDetails";
+import DonationPets from "../Pages/DonationPets/DonationPets";
 
 
 
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             {
                 path: 'pet-details/:id',
                 element: <PetDetails></PetDetails>
+            },
+            {
+                path: 'donation-pets',
+                element: <DonationPets></DonationPets>
             },
         ]
     },

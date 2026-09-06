@@ -11,7 +11,7 @@ import { AuthContext } from "../../../providers/AuthProvider";
 const navLinks = [
     { to: "/", label: "Home" },
     { to: "/pet-listing", label: "Pet listing" },
-    { to: "/donation-campaigns", label: "Donation campaigns" },
+    { to: "/donation-pets", label: "Donation campaigns" },
 ]
 
 const Navbar = () => {
