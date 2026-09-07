@@ -1,8 +1,12 @@
+import { Link } from "react-router-dom";
+
 const DonationPetsCart = ({ pet }) => {
+
+    const { _id, petName, image, donatedAmount, maximumDonation} = pet;
 
     const percentage = Math.min(
         Math.round(
-            (pet.donatedAmount / pet.maximumDonation) * 100
+            (donatedAmount / maximumDonation) * 100
         ),
         100
     );
@@ -18,8 +22,8 @@ const DonationPetsCart = ({ pet }) => {
             {/* Image */}
             <div className="h-56 overflow-hidden">
                 <img
-                    src={pet.image}
-                    alt={pet.petName}
+                    src={image}
+                    alt={petName}
                     className="w-full h-full object-cover
                                hover:scale-105 transition-transform
                                duration-500"
@@ -31,7 +35,7 @@ const DonationPetsCart = ({ pet }) => {
 
                 {/* Pet Name */}
                 <h2 className="text-xl font-bold mb-4">
-                    {pet.petName}
+                    {petName}
                 </h2>
 
                 {/* Amount */}
@@ -41,10 +45,10 @@ const DonationPetsCart = ({ pet }) => {
                     </span>
 
                     <span className="font-semibold">
-                        ${pet.donatedAmount?.toLocaleString()}
+                        ${donatedAmount?.toLocaleString()}
 
                         <span className="text-gray-400 font-normal">
-                            {" "} / ${pet.maximumDonation?.toLocaleString()}
+                            {" "} / ${maximumDonation?.toLocaleString()}
                         </span>
                     </span>
                 </div>
@@ -63,16 +67,16 @@ const DonationPetsCart = ({ pet }) => {
                     </span>
 
                     <span className="text-gray-500">
-                        Goal ${pet.maximumDonation?.toLocaleString()}
+                        Goal ${maximumDonation?.toLocaleString()}
                     </span>
                 </div>
 
                 {/* Button */}
-                <button
+                <Link to={`/donation-details/${_id}`}
                     className="btn btn-warning text-black w-full mt-5 rounded-xl"
                 >
                     View Details
-                </button>
+                </Link>
 
             </div>
         </div>
