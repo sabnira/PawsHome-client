@@ -2,14 +2,18 @@ import { Link } from "react-router-dom";
 
 const DonationPetsCart = ({ pet }) => {
 
-    const { _id, petName, image, donatedAmount, maximumDonation} = pet;
+    const { _id, petName, image, donatedAmount = 0, maximumDonation = 0} = pet;
 
-    const percentage = Math.min(
-        Math.round(
-            (donatedAmount / maximumDonation) * 100
-        ),
-        100
-    );
+    // Calculate donation progress
+    const percentage =
+        maximumDonation > 0
+            ? Math.min(
+                Math.round(
+                    (donatedAmount / maximumDonation) * 100
+                ),
+                100
+            )
+            : 0;
 
     return (
         <div

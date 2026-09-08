@@ -1,28 +1,32 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Loading from "../../components/Loading";
 import useDonationPet from "../../hooks/useDonationPet";
 import { FaHeart } from "react-icons/fa6";
 
+
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+import { useState } from "react";
+import DonationModal from "../../components/DonationModal";
+
+
+const stripePromise = loadStripe(import.meta.env.VITE_Payment_Gateway_PK);
+
+
 const DonationDetails = () => {
+
     const { id } = useParams();
 
     const [donationPet, loading] = useDonationPet(id);
+
+    const [showModal, setShowModal] = useState(false);
 
     if (loading) {
         return <Loading />;
     }
 
-    const {
-        petName,
-        image,
-        donatedAmount = 0,
-        maximumDonation = 0,
-        category,
-        age,
-        location,
-        reason,
-        description,
-    } = donationPet;
+    const { petName, image, donatedAmount = 0, maximumDonation = 0, category, age, location, reason, description } = donationPet;
 
     // Calculate donation progress
     const percentage =
@@ -34,6 +38,7 @@ const DonationDetails = () => {
                 100
             )
             : 0;
+
 
     // Remaining amount
     const remainingAmount = Math.max(
@@ -49,22 +54,18 @@ const DonationDetails = () => {
             <div className="max-w-6xl mx-auto px-4">
 
                 {/* Breadcrumb */}
-                <div className="mb-7">
-                    <p className="text-sm text-base-content/50">
-                        Home / Donation Campaign /{" "}
-                        <span className="text-base-content font-medium">
-                            {petName}
-                        </span>
-                    </p>
+                <div className="breadcrumbs text-sm mb-7 text-base-content/50">
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/donation-pets">Donation Campaign</Link></li>
+                        <li className="text-base-content font-medium">{petName}</li>
+                    </ul>
                 </div>
 
-                {/* Main Layout */}
+
                 <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
 
-                    {/* ================================= */}
                     {/* LEFT SIDE */}
-                    {/* ================================= */}
-
                     <div className="space-y-6">
 
                         {/* Image */}
@@ -75,7 +76,7 @@ const DonationDetails = () => {
                                 <img
                                     src={image}
                                     alt={petName}
-                                    className="w-full h-[420px] md:h-[500px] object-cover"
+                                    className="w-full h-100 md:h-125 object-cover"
                                 />
 
                                 {/* Category */}
@@ -219,10 +220,8 @@ const DonationDetails = () => {
 
                     </div>
 
-                    {/* ================================= */}
-                    {/* RIGHT SIDE */}
-                    {/* ================================= */}
 
+                    {/* RIGHT SIDE */}
                     <div className="lg:sticky lg:top-6">
 
                         <div className="bg-base-100 rounded-3xl p-6 md:p-8 border border-base-200 shadow-lg">
@@ -383,7 +382,10 @@ const DonationDetails = () => {
                                     </span>
                                 </div>
                             ) : (
-                                <button className="btn btn-warning w-full mt-7 rounded-2xl h-14 text-base font-bold shadow-md hover:shadow-lg transition-all">
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="btn btn-warning w-full mt-7 rounded-2xl h-14 text-base font-bold shadow-md hover:shadow-lg transition-all"
+                                >
                                     Donate Now
                                 </button>
                             )}
@@ -402,7 +404,19 @@ const DonationDetails = () => {
 
                 </div>
             </div>
+
+            {showModal && (
+                <Elements stripe={stripePromise}>
+                    <DonationModal
+                        donationPet={donationPet}
+                        onClose={() => setShowModal(false)}
+                    />
+                </Elements>
+            )}
+
         </div>
+
+
     );
 };
 
