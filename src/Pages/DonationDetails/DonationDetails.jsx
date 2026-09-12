@@ -2,11 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import Loading from "../../components/Loading";
 import useDonationPet from "../../hooks/useDonationPet";
 import { FaHeart } from "react-icons/fa6";
-
-
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-
 import { useState } from "react";
 import DonationModal from "../../components/DonationModal";
 

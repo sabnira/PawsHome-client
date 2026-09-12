@@ -2,7 +2,8 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-
+import { IoCloseOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa6";
 
 
 const DonationModal = ({ donationPet, onClose }) => {
@@ -11,7 +12,6 @@ const DonationModal = ({ donationPet, onClose }) => {
     const axiosSecure = useAxiosSecure();
 
     const [amount, setAmount] = useState("");
-    const [processing, setProcessing] = useState(false);
 
     const {
         _id,
@@ -34,29 +34,8 @@ const DonationModal = ({ donationPet, onClose }) => {
 
         const donationAmount = Number(amount);
 
-        // // Validation
-        // if (!donationAmount || donationAmount <= 0) {
-        //     Swal.fire({
-        //         icon: "warning",
-        //         title: "Invalid Amount",
-        //         text: "Please enter a valid donation amount.",
-        //     });
-        //     return;
-        // }
-
-        // if (donationAmount > remainingAmount) {
-        //     Swal.fire({
-        //         icon: "warning",
-        //         title: "Amount Too High",
-        //         text: `You can donate up to $${remainingAmount}.`,
-        //     });
-        //     return;
-        // }
-
-        setProcessing(true);
-
         try {
-            // 1. Ask backend to create PaymentIntent
+            // 1. Create PaymentIntent
             const { data } = await axiosSecure.post(
                 "/create-payment-intent",
                 {
@@ -85,9 +64,8 @@ const DonationModal = ({ donationPet, onClose }) => {
                 throw new Error(result.error.message);
             }
 
+            // 4. Save donation if payment succeeded
             if (result.paymentIntent.status === "succeeded") {
-
-                // 4. Save donation in database
                 const donationData = {
                     campaignId: _id,
                     petName,
@@ -123,8 +101,6 @@ const DonationModal = ({ donationPet, onClose }) => {
                     error.message ||
                     "Something went wrong.",
             });
-        } finally {
-            setProcessing(false);
         }
     };
 
@@ -133,71 +109,57 @@ const DonationModal = ({ donationPet, onClose }) => {
 
             <div className="bg-base-100 w-full max-w-lg rounded-3xl shadow-2xl p-6 md:p-8">
 
-                {/* Header */}
+               
                 <div className="flex justify-between items-center mb-6">
-
                     <div>
                         <h2 className="text-2xl font-bold">
                             Donate to {petName}
                         </h2>
 
-                        <p className="text-sm text-base-content/50 mt-1">
-                            Every contribution makes a difference ❤️
+                        <p className="flex justify-center items-center gap-2 text-sm text-base-content/50 mt-1">
+                            Every contribution makes a difference 
+                            <span className="text-red-400"><FaHeart></FaHeart></span>
                         </p>
                     </div>
 
                     <button
                         type="button"
                         onClick={onClose}
-                        className="btn btn-sm btn-circle btn-ghost"
+                        className="btn btn-sm text-xl btn-circle btn-ghost"
                     >
-                        ✕
+                        <IoCloseOutline />
                     </button>
-
                 </div>
 
                 <form onSubmit={handleSubmit}>
 
                     {/* Donation Amount */}
                     <div className="form-control mb-5">
-
                         <label className="label">
                             <span className="label-text font-semibold">
                                 Donation Amount
                             </span>
                         </label>
 
-                        <div className="relative">
-
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold">
-                                $
-                            </span>
-
-                            <input
-                                type="number"
-                                min="1"
-                                max={remainingAmount}
-                                step="0.01"
-                                value={amount}
-                                onChange={(e) =>
-                                    setAmount(e.target.value)
-                                }
-                                placeholder="Enter amount"
-                                className="input input-bordered w-full pl-8 rounded-xl"
-                                required
-                            />
-
-                        </div>
+                        <input
+                            type="number"
+                            min="1"
+                            max={remainingAmount}
+                            step="0.01"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            placeholder="Enter amount"
+                            className="input input-bordered w-full rounded-xl"
+                            required
+                        />
 
                         <p className="text-xs text-base-content/50 mt-2">
                             Remaining amount: ${remainingAmount}
                         </p>
-
                     </div>
 
                     {/* Stripe Card */}
                     <div className="form-control">
-
                         <label className="label">
                             <span className="label-text font-semibold">
                                 Card Information
@@ -205,43 +167,22 @@ const DonationModal = ({ donationPet, onClose }) => {
                         </label>
 
                         <div className="border border-base-300 rounded-xl p-4 bg-base-100">
-
-                            <CardElement
-                                options={{
-                                    style: {
-                                        base: {
-                                            fontSize: "16px",
-                                            color: "#32325d",
-                                            "::placeholder": {
-                                                color: "#aab7c4",
-                                            },
-                                        },
-                                        invalid: {
-                                            color: "#fa755a",
-                                        },
-                                    },
-                                }}
-                            />
-
+                            <CardElement />
                         </div>
-
                     </div>
 
                     {/* Submit */}
                     <button
                         type="submit"
-                        disabled={!stripe || processing}
+                        disabled={!stripe}
                         className="btn btn-warning w-full mt-7 rounded-xl h-14 font-bold"
                     >
-                        {processing
-                            ? "Processing Payment..."
-                            : `Donate $${amount || "0"}`}
+                        Donate ${amount || "0"}
                     </button>
 
                 </form>
 
             </div>
-
         </div>
     );
 };
