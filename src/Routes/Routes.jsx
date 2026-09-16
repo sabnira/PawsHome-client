@@ -8,6 +8,9 @@ import PetListing from "../Pages/PetListing/PetListing";
 import PetDetails from "../Pages/PetDetails/PetDetails";
 import DonationPets from "../Pages/DonationPets/DonationPets";
 import DonationDetails from "../Pages/DonationDetails/DonationDetails";
+import Dashboard from "../Layout/Dashboard";
+import AdminRoute from "./AdminRoute";
+import UserDashboard from "../Pages/UserDashboard/UserDashboard";
 
 
 
@@ -48,6 +51,62 @@ const router = createBrowserRouter([
             },
         ]
     },
+    {
+        path: "/dashboard",
+        element: <Dashboard />,
+        children: [
+
+            // User + Admin
+            {
+                index: true,
+                element: <UserDashboard></UserDashboard>
+            },
+            {
+                path: "add-pet",
+                // element: <AddPet />
+            },
+            {
+                path: "my-pets",
+                // element: <MyAddedPets />
+            },
+            {
+                path: "adoption-requests",
+                // element: <AdoptionRequests />
+            },
+            {
+                path: "create-campaign",
+                // element: <CreateCampaign />
+            },
+            {
+                path: "my-campaigns",
+                // element: <MyCampaigns />
+            },
+            {
+                path: "my-donations",
+                // element: <MyDonations />
+            },
+
+
+            // Admin only
+            {
+                element: <AdminRoute />,
+                children: [
+                    {
+                        path: "users",
+                        // element: <Users />
+                    },
+                    {
+                        path: "all-pets",
+                        // element: <AllPets />
+                    },
+                    {
+                        path: "all-donations",
+                        // element: <AllDonations />
+                    }
+                ]
+            }
+        ]
+    }
 ]);
 
 

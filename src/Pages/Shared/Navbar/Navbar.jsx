@@ -12,6 +12,7 @@ const navLinks = [
     { to: "/", label: "Home" },
     { to: "/pet-listing", label: "Pet listing" },
     { to: "/donation-pets", label: "Donation campaigns" },
+    { to: "/dashboard", label: "Dashboard" },
 ]
 
 const Navbar = () => {
@@ -48,7 +49,7 @@ const Navbar = () => {
                 <ul className="menu menu-horizontal px-1">
                     {navLinks.map(({ to, label }) => (
                         <li key={to} className="text-lg font-bold">
-                            <NavLink to={to} className={({ isActive }) => isActive ? " text-green-500 mr-2" : "mr-2"}>
+                            <NavLink to={to} className={({ isActive }) => isActive ? " text-warning mr-2" : "mr-2"}>
                                 {label}
                             </NavLink>
                         </li>

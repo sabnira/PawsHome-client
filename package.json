@@ -21,6 +21,7 @@
     "keen-slider": "^6.8.6",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.1",
+    "lucide-react": "^1.46.0",
     "match-sorter": "^8.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
