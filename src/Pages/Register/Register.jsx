@@ -1,6 +1,4 @@
-// import { Player } from "@lottiefiles/react-lottie-player";
 import { Helmet } from "react-helmet-async";
-// import registerAnim from "../../assets/json/signup.json";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
@@ -9,7 +7,6 @@ import { AuthContext } from "../../providers/AuthProvider";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import SocialLogin from "../../components/SocialLogin";
-// import dogImg from "../../assets/dog.png";
 import petImg from "../../assets/pet.png";
 
 
@@ -39,7 +36,8 @@ const Register = () => {
                         //create user entry in the database
                         const userInfo = {
                             name: data.name,
-                            email: data.email
+                            email: data.email,
+                            role: "user"
                         }
                         axiosPublic.post('/users', userInfo)
                             .then(res => {

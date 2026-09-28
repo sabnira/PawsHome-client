@@ -11,6 +11,7 @@ import DonationDetails from "../Pages/DonationDetails/DonationDetails";
 import Dashboard from "../Layout/Dashboard";
 import AdminRoute from "./AdminRoute";
 import UserDashboard from "../Pages/UserDashboard/UserDashboard";
+import AddPet from "../Pages/UserDashboard/AddPet";
 
 
 
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "add-pet",
-                // element: <AddPet />
+                element: <AddPet />
             },
             {
                 path: "my-pets",
