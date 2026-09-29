@@ -12,6 +12,7 @@ import Dashboard from "../Layout/Dashboard";
 import AdminRoute from "./AdminRoute";
 import UserDashboard from "../Pages/UserDashboard/UserDashboard";
 import AddPet from "../Pages/UserDashboard/AddPet";
+import MyAddedPets from "../Pages/UserDashboard/MyAddedPets";
 
 
 
@@ -68,7 +69,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "my-pets",
-                // element: <MyAddedPets />
+                element: <MyAddedPets />
             },
             {
                 path: "adoption-requests",
