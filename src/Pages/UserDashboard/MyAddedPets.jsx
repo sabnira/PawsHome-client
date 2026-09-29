@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-    ArrowUpDown,
-    Check,
-    Pencil,
-    Trash2,
-} from "lucide-react";
+    FiCheck,
+    FiEdit,
+    FiTrash2,
+} from "react-icons/fi";
 import {
     createSortedRowModel,
     rowSortingFeature,
@@ -18,7 +17,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { AuthContext } from "../../providers/AuthProvider";
 
 
-// TanStack Table v9 sorting feature
+// TanStack Table
 const features = tableFeatures({
     rowSortingFeature,
     sortedRowModel: createSortedRowModel(),
@@ -33,9 +32,6 @@ const MyAddedPets = () => {
     const [loading, setLoading] = useState(true);
 
 
-    // ==========================================
-    // GET MY ADDED PETS
-    // ==========================================
     useEffect(() => {
         if (!user?.email) return;
 
@@ -77,9 +73,8 @@ const MyAddedPets = () => {
     }, [user?.email, axiosSecure]);
 
 
-    // ==========================================
+   
     // DELETE PET
-    // ==========================================
     const handleDelete = async (pet) => {
         const result = await Swal.fire({
             title: "Delete Pet?",
@@ -142,9 +137,8 @@ const MyAddedPets = () => {
     };
 
 
-    // ==========================================
+  
     // MARK PET AS ADOPTED
-    // ==========================================
     const handleAdopted = async (pet) => {
         // Already adopted
         if (pet.adopted === true) {
@@ -178,7 +172,7 @@ const MyAddedPets = () => {
                 },
             });
 
-            // MongoDB:
+    
             // adopted: false -> true
             await axiosSecure.patch(
                 `/pets/${pet._id}/adopted`
@@ -220,13 +214,10 @@ const MyAddedPets = () => {
     };
 
 
-    // ==========================================
+    
     // TABLE COLUMNS
-    // ==========================================
     const columns = [
-        // --------------------------------------
         // SERIAL NUMBER
-        // --------------------------------------
         {
             accessorKey: "serialNumber",
 
@@ -237,7 +228,7 @@ const MyAddedPets = () => {
                     className="flex items-center gap-1 font-semibold"
                 >
                     Serial Number
-                    <ArrowUpDown size={15} />
+                   
                 </button>
             ),
 
@@ -246,9 +237,7 @@ const MyAddedPets = () => {
         },
 
 
-        // --------------------------------------
         // PET NAME
-        // --------------------------------------
         {
             accessorKey: "name",
 
@@ -259,7 +248,6 @@ const MyAddedPets = () => {
                     className="flex items-center gap-1 font-semibold"
                 >
                     Pet Name
-                    <ArrowUpDown size={15} />
                 </button>
             ),
 
@@ -271,9 +259,7 @@ const MyAddedPets = () => {
         },
 
 
-        // --------------------------------------
         // PET CATEGORY
-        // --------------------------------------
         {
             accessorKey: "category",
 
@@ -284,7 +270,6 @@ const MyAddedPets = () => {
                     className="flex items-center gap-1 font-semibold"
                 >
                     Pet Category
-                    <ArrowUpDown size={15} />
                 </button>
             ),
 
@@ -296,9 +281,7 @@ const MyAddedPets = () => {
         },
 
 
-        // --------------------------------------
         // PET IMAGE
-        // --------------------------------------
         {
             accessorKey: "image",
 
@@ -309,7 +292,6 @@ const MyAddedPets = () => {
                     className="flex items-center gap-1 font-semibold"
                 >
                     Pet Image
-                    <ArrowUpDown size={15} />
                 </button>
             ),
 
@@ -323,9 +305,7 @@ const MyAddedPets = () => {
         },
 
 
-        // --------------------------------------
         // ADOPTION STATUS
-        // --------------------------------------
         {
             accessorKey: "adopted",
 
@@ -336,7 +316,6 @@ const MyAddedPets = () => {
                     className="flex items-center gap-1 font-semibold"
                 >
                     Adoption Status
-                    <ArrowUpDown size={15} />
                 </button>
             ),
 
@@ -360,9 +339,7 @@ const MyAddedPets = () => {
         },
 
 
-        // --------------------------------------
         // THREE ACTION BUTTONS
-        // --------------------------------------
         {
             id: "actions",
 
@@ -384,7 +361,7 @@ const MyAddedPets = () => {
                             to={`/dashboard/update-pet/${pet._id}`}
                             className="btn btn-sm btn-outline"
                         >
-                            <Pencil size={15} />
+                            <FiEdit size={15} />
                             Update
                         </Link>
 
@@ -397,7 +374,7 @@ const MyAddedPets = () => {
                             }
                             className="btn btn-sm btn-error btn-outline"
                         >
-                            <Trash2 size={15} />
+                            <FiTrash2 size={15} />
                             Delete
                         </button>
 
@@ -410,7 +387,7 @@ const MyAddedPets = () => {
                                     : "border-[#F7C948] bg-[#F7C948] text-black hover:bg-[#eab93f]"
                                 }`}
                         >
-                            <Check size={15} />
+                            <FiCheck size={15} />
                             Adopted
                         </button>
 
@@ -421,9 +398,7 @@ const MyAddedPets = () => {
     ];
 
 
-    // ==========================================
     // CREATE TABLE
-    // ==========================================
     const table = useTable({
         key: "my-added-pets",
         features,
@@ -432,21 +407,18 @@ const MyAddedPets = () => {
     });
 
 
-    // ==========================================
     // LOADING
-    // ==========================================
     if (loading) {
         return (
-            <div className="flex min-h-[400px] items-center justify-center">
+            <div className="flex min-h-100 items-center justify-center">
                 <span className="loading loading-spinner loading-lg"></span>
             </div>
         );
     }
 
 
-    // ==========================================
+  
     // PAGE
-    // ==========================================
     return (
         <div className="p-4 md:p-6">
 

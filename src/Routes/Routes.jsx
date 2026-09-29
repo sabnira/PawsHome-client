@@ -13,6 +13,7 @@ import AdminRoute from "./AdminRoute";
 import UserDashboard from "../Pages/UserDashboard/UserDashboard";
 import AddPet from "../Pages/UserDashboard/AddPet";
 import MyAddedPets from "../Pages/UserDashboard/MyAddedPets";
+import UpdatePet from "../Pages/UserDashboard/UpdatePet";
 
 
 
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             {
                 path: "my-pets",
                 element: <MyAddedPets />
+            },
+            {
+                path: "update-pet/:id",
+                element: <UpdatePet></UpdatePet>
             },
             {
                 path: "adoption-requests",

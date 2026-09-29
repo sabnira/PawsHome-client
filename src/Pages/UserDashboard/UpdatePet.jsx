@@ -1,8 +1,8 @@
-
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
-import { FiPlus, FiLoader } from "react-icons/fi";
+import { FiEdit, FiLoader } from "react-icons/fi";
 import Swal from "sweetalert2";
 
 import { AuthContext } from "../../providers/AuthProvider";
@@ -23,21 +23,71 @@ const genderOptions = [
     { value: "Female", label: "Female" },
 ];
 
-const AddPet = () => {
+const UpdatePet = () => {
+    const { id } = useParams();
     const { user } = useContext(AuthContext);
     const axiosSecure = useAxiosSecure();
 
+    const [loading, setLoading] = useState(true);
     const [uploadingImage, setUploadingImage] = useState(false);
+    const [currentImage, setCurrentImage] = useState("");
 
     const {
         register,
         handleSubmit,
         control,
         setValue,
-        formState: { errors, isSubmitting },
         reset,
+        formState: { errors, isSubmitting },
     } = useForm();
 
+    // GET PET DATA
+    useEffect(() => {
+        const fetchPet = async () => {
+            try {
+                setLoading(true);
+
+                const response = await axiosSecure.get(`/pet/${id}`);
+
+                const pet = response.data;
+
+                setCurrentImage(pet.image);
+
+                reset({
+                    name: pet.name,
+                    age: pet.age,
+                    location: pet.location,
+                    price: pet.price,
+                    category: petCategories.find(
+                        (item) => item.value === pet.category
+                    ),
+                    gender: genderOptions.find(
+                        (item) => item.value === pet.gender
+                    ),
+                    image: pet.image,
+                });
+            } catch (error) {
+                console.error("Error loading pet:", error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed to Load Pet",
+                    text:
+                        error.response?.data?.message ||
+                        "Something went wrong while loading the pet.",
+                    confirmButtonText: "OK",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchPet();
+        }
+    }, [id, reset, axiosSecure]);
+
+    // IMAGE UPLOAD
     const handleImageUpload = async (file) => {
         if (!file) return;
 
@@ -61,9 +111,13 @@ const AddPet = () => {
                 throw new Error("Image upload failed");
             }
 
-            setValue("image", data.data.display_url, {
+            const imageUrl = data.data.display_url;
+
+            setValue("image", imageUrl, {
                 shouldValidate: true,
             });
+
+            setCurrentImage(imageUrl);
         } catch (error) {
             console.error("Image upload error:", error);
 
@@ -78,6 +132,7 @@ const AddPet = () => {
         }
     };
 
+    // UPDATE PET
     const onSubmit = async (data) => {
         try {
             const petData = {
@@ -89,32 +144,32 @@ const AddPet = () => {
                 gender: data.gender.value,
                 category: data.category.value,
                 ownerEmail: user?.email,
-                adopted: false,
             };
 
-            const response = await axiosSecure.post("/pets", petData);
+            const response = await axiosSecure.patch(
+                `/pets/${id}`,
+                petData
+            );
 
             if (!response.data.success) {
                 throw new Error(
-                    response.data.message || "Failed to add pet"
+                    response.data.message || "Failed to update pet"
                 );
             }
 
-            reset();
-
             Swal.fire({
                 icon: "success",
-                title: "Pet Added Successfully!",
-                text: `${data.name} has been added to PawsHome.`,
+                title: "Pet Updated Successfully!",
+                text: `${data.name} has been updated successfully.`,
                 confirmButtonText: "OK",
                 confirmButtonColor: "#F7C948",
             });
         } catch (error) {
-            console.error("Error adding pet:", error);
+            console.error("Error updating pet:", error);
 
             Swal.fire({
                 icon: "error",
-                title: "Failed to Add Pet",
+                title: "Failed to Update Pet",
                 text:
                     error.response?.data?.message ||
                     error.message ||
@@ -124,15 +179,24 @@ const AddPet = () => {
         }
     };
 
+    // LOADING
+    if (loading) {
+        return (
+            <div className="flex min-h-100 items-center justify-center">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
+    }
+
     return (
         <div className="mx-auto max-w-4xl">
             <div className="mb-6">
                 <h1 className="text-2xl font-bold md:text-3xl">
-                    Add a Pet
+                    Update Pet
                 </h1>
 
                 <p className="mt-1 text-sm text-base-content/60">
-                    Add a pet to PawsHome and help them find a loving home.
+                    Update the pet information and keep the details up to date.
                 </p>
             </div>
 
@@ -151,7 +215,6 @@ const AddPet = () => {
                         accept="image/*"
                         className="file-input file-input-bordered w-full"
                         {...register("imageFile", {
-                            required: "Pet image is required",
                             onChange: (e) =>
                                 handleImageUpload(e.target.files?.[0]),
                         })}
@@ -163,6 +226,21 @@ const AddPet = () => {
                             required: "Pet image is required",
                         })}
                     />
+
+                    {/* Current Image */}
+                    {currentImage && !uploadingImage && (
+                        <div className="mt-4">
+                            <p className="mb-2 text-sm text-base-content/60">
+                                Current Image
+                            </p>
+
+                            <img
+                                src={currentImage}
+                                alt="Current pet"
+                                className="h-24 w-24 rounded-lg object-cover"
+                            />
+                        </div>
+                    )}
 
                     {uploadingImage && (
                         <p className="mt-2 flex items-center gap-2 text-sm text-info">
@@ -188,8 +266,9 @@ const AddPet = () => {
                         <input
                             type="text"
                             placeholder="Enter pet name"
-                            className={`input input-bordered w-full ${errors.name ? "input-error" : ""
-                                }`}
+                            className={`input input-bordered w-full ${
+                                errors.name ? "input-error" : ""
+                            }`}
                             {...register("name", {
                                 required: "Pet name is required",
                             })}
@@ -210,8 +289,9 @@ const AddPet = () => {
                         <input
                             type="text"
                             placeholder="e.g. 2 years"
-                            className={`input input-bordered w-full ${errors.age ? "input-error" : ""
-                                }`}
+                            className={`input input-bordered w-full ${
+                                errors.age ? "input-error" : ""
+                            }`}
                             {...register("age", {
                                 required: "Pet age is required",
                             })}
@@ -291,8 +371,9 @@ const AddPet = () => {
                     <input
                         type="text"
                         placeholder="e.g. Chattogram"
-                        className={`input input-bordered w-full ${errors.location ? "input-error" : ""
-                            }`}
+                        className={`input input-bordered w-full ${
+                            errors.location ? "input-error" : ""
+                        }`}
                         {...register("location", {
                             required: "Pet location is required",
                         })}
@@ -315,8 +396,9 @@ const AddPet = () => {
                         type="number"
                         min="0"
                         placeholder="Enter price"
-                        className={`input input-bordered w-full ${errors.price ? "input-error" : ""
-                            }`}
+                        className={`input input-bordered w-full ${
+                            errors.price ? "input-error" : ""
+                        }`}
                         {...register("price", {
                             required: "Price is required",
                             min: {
@@ -342,12 +424,12 @@ const AddPet = () => {
                     {isSubmitting ? (
                         <>
                             <FiLoader className="animate-spin" />
-                            Adding Pet...
+                            Updating Pet...
                         </>
                     ) : (
                         <>
-                            <FiPlus />
-                            Add Pet
+                            <FiEdit />
+                            Update Pet
                         </>
                     )}
                 </button>
@@ -356,4 +438,4 @@ const AddPet = () => {
     );
 };
 
-export default AddPet;
+export default UpdatePet;
