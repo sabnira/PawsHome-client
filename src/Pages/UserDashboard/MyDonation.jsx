@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { FiEye } from "react-icons/fi";
 import { FaHandHoldingHeart } from "react-icons/fa";
+import { AuthContext } from "../../providers/AuthProvider";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Loading from "../../components/Loading";
 
@@ -22,10 +24,12 @@ const formatMoney = (amount = 0) =>
     })}`;
 
 const MyDonation = () => {
+    const { user } = useContext(AuthContext);
     const axiosSecure = useAxiosSecure();
 
-    const { data: donations = [], isLoading } = useQuery({
-        queryKey: ["my-donations"],
+    const { data: donations = [], isLoading, isError, error } = useQuery({
+        queryKey: ["my-donations", user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
             const res = await axiosSecure.get("/my-donations");
             return res.data;
@@ -34,6 +38,19 @@ const MyDonation = () => {
 
     if (isLoading) {
         return <Loading />;
+    }
+
+    if (isError) {
+        return (
+            <div className="rounded-3xl border border-red-100 bg-red-50 px-6 py-10 text-center">
+                <h2 className="text-lg font-semibold text-red-600">
+                    Could not load your donations
+                </h2>
+                <p className="mt-2 text-sm text-red-500">
+                    {error.response?.data?.message || error.message}
+                </p>
+            </div>
+        );
     }
 
     const totalDonated = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
