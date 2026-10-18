@@ -1,535 +1,251 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import {
-    FiCheck,
-    FiEdit,
-    FiTrash2,
-} from "react-icons/fi";
-import {
-    createSortedRowModel,
-    rowSortingFeature,
-    tableFeatures,
-    useTable,
-} from "@tanstack/react-table";
+import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
-
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { FiEdit2, FiTrash2, FiCheckCircle, FiPlusCircle } from "react-icons/fi";
+import { FaPaw } from "react-icons/fa";
 import { AuthContext } from "../../providers/AuthProvider";
-
-
-// TanStack Table
-const features = tableFeatures({
-    rowSortingFeature,
-    sortedRowModel: createSortedRowModel(),
-});
-
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import Loading from "../../components/Loading";
 
 const MyAddedPets = () => {
     const { user } = useContext(AuthContext);
     const axiosSecure = useAxiosSecure();
 
-    const [pets, setPets] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-        if (!user?.email) return;
-
-        const fetchMyPets = async () => {
-            try {
-                setLoading(true);
-
-                const res = await axiosSecure.get(
-                    `/my-pets?email=${encodeURIComponent(user.email)}`
-                );
-
-                const petsWithSerial = res.data.map(
-                    (pet, index) => ({
-                        ...pet,
-                        serialNumber: index + 1,
-                    })
-                );
-
-                setPets(petsWithSerial);
-            } catch (error) {
-                console.error(
-                    "Error loading my pets:",
-                    error
-                );
-
-                Swal.fire({
-                    icon: "error",
-                    title: "Failed to Load Pets",
-                    text:
-                        error.response?.data?.message ||
-                        "Something went wrong while loading your pets.",
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMyPets();
-    }, [user?.email, axiosSecure]);
-
-
-   
-    // DELETE PET
-    const handleDelete = async (pet) => {
-        const result = await Swal.fire({
-            title: "Delete Pet?",
-            text: `Are you sure you want to delete ${pet.name}?`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#6b7280",
-            reverseButtons: true,
-        });
-
-        if (!result.isConfirmed) {
-            return;
-        }
-
-        try {
-            Swal.fire({
-                title: "Deleting...",
-                text: "Please wait while the pet is being deleted.",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-            await axiosSecure.delete(
-                `/pets/${pet._id}`
-            );
-
-            setPets((previousPets) =>
-                previousPets.filter(
-                    (item) => item._id !== pet._id
-                )
-            );
-
-            Swal.fire({
-                icon: "success",
-                title: "Deleted!",
-                text: `${pet.name} has been deleted successfully.`,
-                confirmButtonText: "OK",
-                confirmButtonColor: "#F7C948",
-            });
-        } catch (error) {
-            console.error(
-                "Error deleting pet:",
-                error
-            );
-
-            Swal.fire({
-                icon: "error",
-                title: "Delete Failed",
-                text:
-                    error.response?.data?.message ||
-                    "Failed to delete the pet.",
-            });
-        }
-    };
-
-
-  
-    // MARK PET AS ADOPTED
-    const handleAdopted = async (pet) => {
-        // Already adopted
-        if (pet.adopted === true) {
-            return;
-        }
-
-        const result = await Swal.fire({
-            title: "Mark as Adopted?",
-            text: `Are you sure ${pet.name} has been adopted?`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-            confirmButtonColor: "#F7C948",
-            cancelButtonColor: "#6b7280",
-            reverseButtons: true,
-        });
-
-        if (!result.isConfirmed) {
-            return;
-        }
-
-        try {
-            Swal.fire({
-                title: "Updating...",
-                text: "Please wait while the adoption status is being updated.",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-            });
-
-    
-            // adopted: false -> true
-            await axiosSecure.patch(
-                `/pets/${pet._id}/adopted`
-            );
-
-            // Update the table immediately
-            setPets((previousPets) =>
-                previousPets.map((item) =>
-                    item._id === pet._id
-                        ? {
-                            ...item,
-                            adopted: true,
-                        }
-                        : item
-                )
-            );
-
-            Swal.fire({
-                icon: "success",
-                title: "Adopted!",
-                text: `${pet.name} has been marked as adopted.`,
-                confirmButtonText: "OK",
-                confirmButtonColor: "#F7C948",
-            });
-        } catch (error) {
-            console.error(
-                "Error updating adoption status:",
-                error
-            );
-
-            Swal.fire({
-                icon: "error",
-                title: "Update Failed",
-                text:
-                    error.response?.data?.message ||
-                    "Failed to update adoption status.",
-            });
-        }
-    };
-
-
-    
-    // TABLE COLUMNS
-    const columns = [
-        // SERIAL NUMBER
-        {
-            accessorKey: "serialNumber",
-
-            header: ({ column }) => (
-                <button
-                    type="button"
-                    onClick={column.getToggleSortingHandler()}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    Serial Number
-                   
-                </button>
-            ),
-
-            cell: ({ row }) =>
-                row.original.serialNumber,
+    const {
+        data: pets = [],
+        isLoading,
+        refetch,
+    } = useQuery({
+        queryKey: ["my-pets", user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/my-pets?email=${user.email}`);
+            return res.data;
         },
-
-
-        // PET NAME
-        {
-            accessorKey: "name",
-
-            header: ({ column }) => (
-                <button
-                    type="button"
-                    onClick={column.getToggleSortingHandler()}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    Pet Name
-                </button>
-            ),
-
-            cell: ({ row }) => (
-                <span className="font-medium">
-                    {row.original.name}
-                </span>
-            ),
-        },
-
-
-        // PET CATEGORY
-        {
-            accessorKey: "category",
-
-            header: ({ column }) => (
-                <button
-                    type="button"
-                    onClick={column.getToggleSortingHandler()}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    Pet Category
-                </button>
-            ),
-
-            cell: ({ row }) => (
-                <span className="capitalize">
-                    {row.original.category}
-                </span>
-            ),
-        },
-
-
-        // PET IMAGE
-        {
-            accessorKey: "image",
-
-            header: ({ column }) => (
-                <button
-                    type="button"
-                    onClick={column.getToggleSortingHandler()}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    Pet Image
-                </button>
-            ),
-
-            cell: ({ row }) => (
-                <img
-                    src={row.original.image}
-                    alt={row.original.name}
-                    className="h-14 w-14 rounded-lg object-cover"
-                />
-            ),
-        },
-
-
-        // ADOPTION STATUS
-        {
-            accessorKey: "adopted",
-
-            header: ({ column }) => (
-                <button
-                    type="button"
-                    onClick={column.getToggleSortingHandler()}
-                    className="flex items-center gap-1 font-semibold"
-                >
-                    Adoption Status
-                </button>
-            ),
-
-            cell: ({ row }) => {
-                const adopted =
-                    row.original.adopted === true;
-
-                return (
-                    <span
-                        className={`badge ${adopted
-                            ? "badge-success"
-                            : "badge-warning"
-                            }`}
-                    >
-                        {adopted
-                            ? "Adopted"
-                            : "Not Adopted"}
-                    </span>
-                );
-            },
-        },
-
-
-        // THREE ACTION BUTTONS
-        {
-            id: "actions",
-
-            header: "Actions",
-
-            enableSorting: false,
-
-            cell: ({ row }) => {
-                const pet = row.original;
-
-                const isAdopted =
-                    pet.adopted === true;
-
-                return (
-                    <div className="flex flex-wrap gap-2">
-
-                        {/* UPDATE BUTTON */}
-                        <Link
-                            to={`/dashboard/update-pet/${pet._id}`}
-                            className="btn btn-sm btn-outline"
-                        >
-                            <FiEdit size={15} />
-                            Update
-                        </Link>
-
-
-                        {/* DELETE BUTTON */}
-                        <button
-                            type="button"
-                            onClick={() =>
-                                handleDelete(pet)
-                            }
-                            className="btn btn-sm btn-error btn-outline"
-                        >
-                            <FiTrash2 size={15} />
-                            Delete
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => handleAdopted(pet)}
-                            disabled={isAdopted}
-                            className={`btn btn-sm ${isAdopted
-                                    ? "cursor-not-allowed border-gray-300 bg-gray-300 text-gray-500"
-                                    : "border-[#F7C948] bg-[#F7C948] text-black hover:bg-[#eab93f]"
-                                }`}
-                        >
-                            <FiCheck size={15} />
-                            Adopted
-                        </button>
-
-                    </div>
-                );
-            },
-        },
-    ];
-
-
-    // CREATE TABLE
-    const table = useTable({
-        key: "my-added-pets",
-        features,
-        columns,
-        data: pets,
     });
 
+    const handleDelete = async (pet) => {
+        const result = await Swal.fire({
+            title: `Delete ${pet.name}?`,
+            text: "This pet will be removed permanently.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e53e3e",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Delete pet",
+        });
 
-    // LOADING
-    if (loading) {
-        return (
-            <div className="flex min-h-100 items-center justify-center">
-                <span className="loading loading-spinner loading-lg"></span>
-            </div>
-        );
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await axiosSecure.delete(`/pets/${pet._id}`);
+            if (res.data.deletedCount > 0) {
+                refetch();
+                Swal.fire({
+                    icon: "success",
+                    title: "Pet deleted",
+                    text: `${pet.name} has been removed.`,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Could not delete pet",
+                text: error.response?.data?.message || "Please try again.",
+            });
+        }
+    };
+
+    const handleAdopted = async (pet) => {
+        const result = await Swal.fire({
+            title: `Mark ${pet.name} as adopted?`,
+            text: "The pet will no longer be shown as available.",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#43934A",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Mark as adopted",
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await axiosSecure.patch(`/pets/${pet._id}/adopted`);
+            if (res.data.modifiedCount > 0) {
+                refetch();
+                Swal.fire({
+                    icon: "success",
+                    title: "Marked as adopted",
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Could not update status",
+                text: error.response?.data?.message || "Please try again.",
+            });
+        }
+    };
+
+    if (isLoading) {
+        return <Loading />;
     }
 
-
-  
-    // PAGE
     return (
-        <div className="p-4 md:p-6">
+        <div>
+            <Helmet>
+                <title>PawsHome | My Added Pets</title>
+            </Helmet>
 
-            {/* PAGE HEADER */}
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold md:text-3xl">
-                    My Added Pets
-                </h1>
+            {/* Header */}
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                        My Added Pets
+                    </h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        {pets.length} {pets.length === 1 ? "pet" : "pets"} listed for adoption
+                    </p>
+                </div>
 
-                <p className="mt-1 text-gray-500">
-                    Manage the pets you have added for
-                    adoption.
-                </p>
+                <Link
+                    to="/dashboard/add-pet"
+                    className="btn btn-warning rounded-xl text-black"
+                >
+                    <FiPlusCircle className="text-lg" />
+                    Add a pet
+                </Link>
             </div>
 
-
-            {/* NO PETS */}
+            {/* Empty state */}
             {pets.length === 0 ? (
-                <div className="rounded-xl border bg-base-100 p-10 text-center shadow-sm">
-
-                    <h2 className="text-xl font-semibold">
-                        No Pets Added Yet
+                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-6 py-16 text-center">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#FFF8E1] text-2xl text-[#D99A00]">
+                        <FaPaw />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                        You haven't added any pets yet
                     </h2>
-
-                    <p className="mt-2 text-gray-500">
-                        You have not added any pets yet.
+                    <p className="mt-2 max-w-sm text-sm text-gray-500">
+                        Add your first pet and adopters will be able to find it and send requests.
                     </p>
-
                     <Link
                         to="/dashboard/add-pet"
-                        className="btn mt-5 border-[#F7C948] bg-[#F7C948] text-black hover:bg-[#eab93f]"
+                        className="btn btn-warning mt-6 rounded-xl text-black"
                     >
-                        Add a Pet
+                        Add a pet
                     </Link>
-
                 </div>
             ) : (
+                <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white">
+                    <div className="overflow-x-auto">
+                        <table className="table">
+                            <thead>
+                                <tr className="border-b border-gray-100 text-xs text-gray-500">
+                                    <th className="w-12">#</th>
+                                    <th>Pet</th>
+                                    <th>Category</th>
+                                    <th>Age</th>
+                                    <th>Adoption fee</th>
+                                    <th>Status</th>
+                                    <th className="text-right">Actions</th>
+                                </tr>
+                            </thead>
 
-                /* TABLE */
-                <div className="overflow-x-auto rounded-xl border bg-base-100 shadow-sm">
-
-                    <table className="table">
-
-                        {/* TABLE HEADER */}
-                        <thead>
-                            {table
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
+                            <tbody>
+                                {pets.map((pet, index) => (
                                     <tr
-                                        key={headerGroup.id}
+                                        key={pet._id}
+                                        className="border-b border-gray-50 last:border-0"
                                     >
-                                        {headerGroup.headers.map(
-                                            (header) => (
-                                                <th
-                                                    key={
-                                                        header.id
-                                                    }
-                                                >
-                                                    {header.isPlaceholder
-                                                        ? null
-                                                        : (
-                                                            <table.FlexRender
-                                                                header={
-                                                                    header
-                                                                }
-                                                            />
-                                                        )}
-                                                </th>
-                                            )
-                                        )}
-                                    </tr>
-                                ))}
-                        </thead>
+                                        <td className="text-gray-400">{index + 1}</td>
 
-
-                        {/* TABLE BODY */}
-                        <tbody>
-                            {table
-                                .getRowModel()
-                                .rows.map((row) => (
-                                    <tr key={row.id}>
-
-                                        {row
-                                            .getAllCells()
-                                            .map(
-                                                (
-                                                    cell
-                                                ) => (
-                                                    <td
-                                                        key={
-                                                            cell.id
-                                                        }
-                                                    >
-                                                        <table.FlexRender
-                                                            cell={
-                                                                cell
-                                                            }
+                                        <td>
+                                            <div className="flex items-center gap-3">
+                                                <div className="avatar">
+                                                    <div className="h-14 w-14 rounded-2xl">
+                                                        <img
+                                                            src={pet.image}
+                                                            alt={pet.name}
+                                                            className="object-cover"
                                                         />
-                                                    </td>
-                                                )
-                                            )}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-gray-900">
+                                                        {pet.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {pet.location}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
 
+                                        <td className="text-gray-700">{pet.category}</td>
+                                        <td className="text-gray-700">{pet.age}</td>
+                                        <td className="font-semibold text-gray-900">
+                                            ${pet.price}
+                                        </td>
+
+                                        <td>
+                                            {pet.adopted ? (
+                                                <span className="badge badge-success badge-soft">
+                                                    Adopted
+                                                </span>
+                                            ) : (
+                                                <span className="badge badge-warning badge-soft">
+                                                    Available
+                                                </span>
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleAdopted(pet)}
+                                                    disabled={pet.adopted}
+                                                    title="Mark as adopted"
+                                                    aria-label={`Mark ${pet.name} as adopted`}
+                                                    className="btn btn-sm btn-ghost btn-square text-green-600 disabled:opacity-30"
+                                                >
+                                                    <FiCheckCircle className="text-lg" />
+                                                </button>
+
+                                                <Link
+                                                    to={`/dashboard/update-pet/${pet._id}`}
+                                                    title="Edit pet"
+                                                    aria-label={`Edit ${pet.name}`}
+                                                    className="btn btn-sm btn-ghost btn-square text-gray-600"
+                                                >
+                                                    <FiEdit2 className="text-lg" />
+                                                </Link>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDelete(pet)}
+                                                    title="Delete pet"
+                                                    aria-label={`Delete ${pet.name}`}
+                                                    className="btn btn-sm btn-ghost btn-square text-red-500"
+                                                >
+                                                    <FiTrash2 className="text-lg" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
-                        </tbody>
-
-                    </table>
-
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
-
         </div>
     );
 };

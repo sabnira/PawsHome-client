@@ -14,6 +14,10 @@ import UserDashboard from "../Pages/UserDashboard/UserDashboard";
 import AddPet from "../Pages/UserDashboard/AddPet";
 import MyAddedPets from "../Pages/UserDashboard/MyAddedPets";
 import UpdatePet from "../Pages/UserDashboard/UpdatePet";
+import AdoptionRequests from "../Pages/UserDashboard/AdoptionRequests";
+import CreateCampaign from "../Pages/UserDashboard/CreateCampaign";
+import MyCampaign from "../Pages/UserDashboard/MyCampaign";
+import MyDonation from "../Pages/UserDashboard/MyDonation";
 
 
 
@@ -78,19 +82,19 @@ const router = createBrowserRouter([
             },
             {
                 path: "adoption-requests",
-                // element: <AdoptionRequests />
+                element: <AdoptionRequests></AdoptionRequests>
             },
             {
                 path: "create-campaign",
-                // element: <CreateCampaign />
+                element: <CreateCampaign />
             },
             {
                 path: "my-campaigns",
-                // element: <MyCampaigns />
+                element: <MyCampaign />
             },
             {
                 path: "my-donations",
-                // element: <MyDonations />
+                element: <MyDonation />
             },
 
 
