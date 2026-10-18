@@ -39,7 +39,7 @@ const userSections = [
 ];
 
 const adminSection = {
-    title: "Administration",
+    title: "Admin",
     items: [
         { to: "/dashboard/users", label: "Users", icon: FiUsers },
         { to: "/dashboard/all-pets", label: "All pets", icon: FaPaw },
@@ -93,7 +93,8 @@ const Dashboard = () => {
                 : "text-white/70 hover:bg-white/10 hover:text-white"
         }`;
 
-    const sections = isAdmin ? [...userSections, adminSection] : userSections;
+    // Admin group is shown to every role for now; AdminRoute still blocks non-admins
+    const sections = [...userSections, adminSection];
 
     const avatar = (
         <div className="avatar">
@@ -131,7 +132,7 @@ const Dashboard = () => {
                     <div key={section.title}>
                         <p
                             className={`mb-2 px-3.5 text-xs font-medium ${
-                                section.title === "Administration"
+                                section.title === "Admin"
                                     ? "text-[#F7C948]"
                                     : "text-white/40"
                             }`}
