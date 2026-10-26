@@ -21,6 +21,7 @@ import MyDonation from "../Pages/UserDashboard/MyDonation";
 import Users from "../Pages/AdminHome/Users";
 import AllPets from "../Pages/AdminHome/AllPets";
 import AllDonations from "../Pages/AdminHome/AllDonations";
+import PrivateRoute from "./PrivateRoute";
 
 
 
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: <PrivateRoute><Dashboard /> </PrivateRoute>,
         children: [
 
             // User + Admin

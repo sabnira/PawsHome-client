@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
     FiGrid,
     FiPlusCircle,
@@ -65,6 +65,7 @@ const Dashboard = () => {
     const [isAdmin] = useAdmin();
     const { user, logOut } = useContext(AuthContext);
     const { pathname } = useLocation();
+    const navigate = useNavigate();
 
     const segment = pathname.split("/")[2];
     const currentPage = segment ? pageNames[segment] : null;
@@ -78,6 +79,7 @@ const Dashboard = () => {
     const handleLogout = async () => {
         try {
             await logOut();
+            navigate("/", { replace: true });
         } catch (error) {
             console.error(error);
         }
