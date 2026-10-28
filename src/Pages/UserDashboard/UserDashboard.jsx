@@ -121,20 +121,20 @@ const UserDashboard = () => {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             <Helmet>
                 <title>PawsHome | Dashboard</title>
             </Helmet>
 
             {/* Welcome */}
-            <section className="relative overflow-hidden rounded-3xl bg-[#F7C948] p-6 sm:p-8">
+            <section className="relative overflow-hidden rounded-3xl bg-[#F7C948] p-5 sm:p-8">
                 <FaPaw
                     aria-hidden="true"
                     className="pointer-events-none absolute -right-6 -top-6 text-[10rem] text-black/10 sm:text-[13rem]"
                 />
 
                 <div className="relative max-w-xl">
-                    <h1 className="text-2xl font-bold text-gray-900 sm:text-4xl">
+                    <h1 className="break-words text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
                         Hi {firstName}, welcome back
                     </h1>
                     <p className="mt-2 text-sm text-gray-800 sm:text-base">
@@ -151,7 +151,7 @@ const UserDashboard = () => {
                                 ? "/dashboard/adoption-requests"
                                 : "/dashboard/add-pet"
                         }
-                        className="btn mt-5 rounded-xl border-none bg-gray-900 text-white hover:bg-gray-800"
+                        className="btn mt-5 w-full rounded-xl border-none bg-gray-900 text-white hover:bg-gray-800 sm:w-auto"
                     >
                         {pendingRequests > 0 ? "Review requests" : "Add a pet"}
                         <FiArrowRight />
@@ -160,38 +160,40 @@ const UserDashboard = () => {
             </section>
 
             {/* Stats */}
-            <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                 {stats.map(({ label, value, note, icon: Icon, to }) => (
                     <Link
                         key={label}
                         to={to}
-                        className="group rounded-3xl border border-gray-100 bg-white p-5 transition hover:border-[#F7C948]"
+                        className="group min-w-0 rounded-3xl border border-gray-100 bg-white p-4 transition hover:border-[#F7C948] sm:p-5"
                     >
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="text-sm text-gray-500">{label}</p>
-                                <p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                                <p className="text-xs text-gray-500 sm:text-sm">{label}</p>
+                                <p className="mt-1.5 truncate text-2xl font-bold text-gray-900 sm:mt-2 sm:text-3xl">
+                                    {value}
+                                </p>
                             </div>
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF8E1] text-lg text-[#D99A00]">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#FFF8E1] text-base text-[#D99A00] sm:h-11 sm:w-11 sm:text-lg">
                                 <Icon />
                             </div>
                         </div>
-                        <p className="mt-3 text-xs text-gray-400">{note}</p>
+                        <p className="mt-2 text-xs text-gray-400 sm:mt-3">{note}</p>
                     </Link>
                 ))}
             </section>
 
             {/* Recent requests + campaigns */}
-            <section className="grid gap-6 lg:grid-cols-5">
+            <section className="grid gap-4 sm:gap-6 xl:grid-cols-5">
                 {/* Recent adoption requests */}
-                <div className="rounded-3xl border border-gray-100 bg-white p-6 lg:col-span-3">
-                    <div className="mb-4 flex items-center justify-between">
+                <div className="min-w-0 rounded-3xl border border-gray-100 bg-white p-4 sm:p-6 xl:col-span-3">
+                    <div className="mb-4 flex items-center justify-between gap-3">
                         <h2 className="text-lg font-semibold text-gray-900">
                             Recent adoption requests
                         </h2>
                         <Link
                             to="/dashboard/adoption-requests"
-                            className="text-sm font-medium text-[#D99A00] hover:underline"
+                            className="shrink-0 text-sm font-medium text-[#D99A00] hover:underline"
                         >
                             View all
                         </Link>
@@ -227,7 +229,7 @@ const UserDashboard = () => {
                                                 </div>
                                             )}
                                             <div className="min-w-0">
-                                                <p className="truncate text-sm font-semibold text-gray-900">
+                                                <p className="break-words text-sm font-semibold text-gray-900 sm:truncate">
                                                     {request.name || request.userName || "Someone"}{" "}
                                                     <span className="font-normal text-gray-500">
                                                         wants to adopt
@@ -239,7 +241,7 @@ const UserDashboard = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={statusBadge[status]}>{status}</span>
+                                        <span className={`${statusBadge[status]} shrink-0`}>{status}</span>
                                     </li>
                                 );
                             })}
@@ -248,14 +250,14 @@ const UserDashboard = () => {
                 </div>
 
                 {/* Campaign progress */}
-                <div className="rounded-3xl border border-gray-100 bg-white p-6 lg:col-span-2">
-                    <div className="mb-4 flex items-center justify-between">
+                <div className="min-w-0 rounded-3xl border border-gray-100 bg-white p-4 sm:p-6 xl:col-span-2">
+                    <div className="mb-4 flex items-center justify-between gap-3">
                         <h2 className="text-lg font-semibold text-gray-900">
                             Campaign progress
                         </h2>
                         <Link
                             to="/dashboard/my-campaigns"
-                            className="text-sm font-medium text-[#D99A00] hover:underline"
+                            className="shrink-0 text-sm font-medium text-[#D99A00] hover:underline"
                         >
                             Manage
                         </Link>
@@ -304,14 +306,14 @@ const UserDashboard = () => {
             </section>
 
             {/* Quick actions */}
-            <section className="rounded-3xl border border-gray-100 bg-white p-6">
+            <section className="rounded-3xl border border-gray-100 bg-white p-4 sm:p-6">
                 <h2 className="mb-4 text-lg font-semibold text-gray-900">Quick actions</h2>
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                     {quickActions.map(({ label, to, icon: Icon }) => (
                         <Link
                             key={label}
                             to={to}
-                            className="flex items-center gap-3 rounded-2xl bg-[#FAFAFB] px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-[#FFF8E1] hover:text-gray-900"
+                            className="flex min-w-0 items-center gap-2.5 rounded-2xl bg-[#FAFAFB] px-3 py-3 text-sm sm:gap-3 sm:px-4 font-medium text-gray-700 transition hover:bg-[#FFF8E1] hover:text-gray-900"
                         >
                             <Icon className="shrink-0 text-lg text-[#D99A00]" />
                             {label}

@@ -2,7 +2,7 @@
 
 
 @import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 @import "tailwindcss";
 @plugin "daisyui";
@@ -10,4 +10,5 @@
 @theme {
   --font-jakarta: 'Plus Jakarta Sans', sans-serif;
   --font-berkshire: 'Berkshire Swash', sans-serif;
+  --font-dmSans: 'DM Sans', sans-serif;
 }

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
 import { FiCheck, FiX, FiEye, FiInbox } from "react-icons/fi";
+import { FaPaw } from "react-icons/fa";
 import { AuthContext } from "../../providers/AuthProvider";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Loading from "../../components/Loading";
@@ -130,6 +131,69 @@ const AdoptionRequests = () => {
         }
     };
 
+    const requesterName = (r) => r.name || r.userName || "—";
+    const requesterEmail = (r) => r.email || r.userEmail;
+
+    const petAvatar = (request, size) =>
+        request.petImage ? (
+            <div className="avatar shrink-0">
+                <div className={`${size} rounded-2xl`}>
+                    <img src={request.petImage} alt={request.petName} className="object-cover" />
+                </div>
+            </div>
+        ) : (
+            <div
+                className={`${size} flex shrink-0 items-center justify-center rounded-2xl bg-[#FFF8E1] text-[#D99A00]`}
+            >
+                <FaPaw />
+            </div>
+        );
+
+    // Icon-only buttons in the table, labelled buttons in the mobile cards
+    const renderActions = (request, labeled = false) => {
+        const isPending = getStatus(request) === "pending";
+        const square = labeled ? "" : "btn-square";
+
+        return (
+            <>
+                <button
+                    type="button"
+                    onClick={() => setSelected(request)}
+                    title="View details"
+                    aria-label="View request details"
+                    className={`btn btn-sm btn-ghost text-gray-600 ${square}`}
+                >
+                    <FiEye className="text-lg" />
+                    {labeled && "Details"}
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => handleAccept(request)}
+                    disabled={!isPending}
+                    title="Accept"
+                    aria-label="Accept request"
+                    className={`btn btn-sm btn-ghost text-green-600 disabled:opacity-30 ${square}`}
+                >
+                    <FiCheck className="text-lg" />
+                    {labeled && "Accept"}
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => handleReject(request)}
+                    disabled={!isPending}
+                    title="Reject"
+                    aria-label="Reject request"
+                    className={`btn btn-sm btn-ghost text-red-500 disabled:opacity-30 ${square}`}
+                >
+                    <FiX className="text-lg" />
+                    {labeled && "Reject"}
+                </button>
+            </>
+        );
+    };
+
     if (isLoading) {
         return <Loading />;
     }
@@ -141,7 +205,7 @@ const AdoptionRequests = () => {
             </Helmet>
 
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
                     Adoption Requests
                 </h1>
@@ -150,8 +214,11 @@ const AdoptionRequests = () => {
                 </p>
             </div>
 
-            {/* Status tabs */}
-            <div role="tablist" className="mb-5 flex flex-wrap gap-2">
+            {/* Status tabs: scroll sideways on narrow phones */}
+            <div
+                role="tablist"
+                className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            >
                 {TABS.map((name) => (
                     <button
                         key={name}
@@ -159,7 +226,7 @@ const AdoptionRequests = () => {
                         role="tab"
                         aria-selected={tab === name}
                         onClick={() => setTab(name)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
+                        className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
                             tab === name
                                 ? "bg-[#F7C948] text-black"
                                 : "bg-white text-gray-600 hover:bg-[#FFF8E1]"
@@ -172,11 +239,11 @@ const AdoptionRequests = () => {
 
             {/* Empty state */}
             {visibleRequests.length === 0 ? (
-                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-6 py-16 text-center">
+                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-4 py-12 text-center sm:px-6 sm:py-16">
                     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#FFF8E1] text-2xl text-[#D99A00]">
                         <FiInbox />
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
                         {tab === "all"
                             ? "No adoption requests yet"
                             : `No ${tab} requests`}
@@ -188,129 +255,144 @@ const AdoptionRequests = () => {
                     </p>
                 </div>
             ) : (
-                <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white">
-                    <div className="overflow-x-auto">
-                        <table className="table">
-                            <thead>
-                                <tr className="border-b border-gray-100 text-xs text-gray-500">
-                                    <th>Pet</th>
-                                    <th>Requester</th>
-                                    <th>Phone</th>
-                                    <th>Requested on</th>
-                                    <th>Status</th>
-                                    <th className="text-right">Actions</th>
-                                </tr>
-                            </thead>
+                <>
+                    {/* Mobile: cards */}
+                    <ul className="space-y-3 md:hidden">
+                        {visibleRequests.map((request) => {
+                            const status = getStatus(request);
 
-                            <tbody>
-                                {visibleRequests.map((request) => {
-                                    const status = getStatus(request);
-                                    const isPending = status === "pending";
+                            return (
+                                <li
+                                    key={request._id}
+                                    className="rounded-3xl border border-gray-100 bg-white p-4"
+                                >
+                                    <div className="flex items-start gap-3">
+                                        {petAvatar(request, "h-14 w-14")}
 
-                                    return (
-                                        <tr
-                                            key={request._id}
-                                            className="border-b border-gray-50 last:border-0"
-                                        >
-                                            <td>
-                                                <div className="flex items-center gap-3">
-                                                    {request.petImage && (
-                                                        <div className="avatar">
-                                                            <div className="h-12 w-12 rounded-2xl">
-                                                                <img
-                                                                    src={request.petImage}
-                                                                    alt={request.petName}
-                                                                    className="object-cover"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    <p className="font-semibold text-gray-900">
-                                                        {request.petName || "Pet"}
-                                                    </p>
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <p className="font-medium text-gray-900">
-                                                    {request.name || request.userName || "—"}
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <p className="truncate font-semibold text-gray-900">
+                                                    {request.petName || "Pet"}
                                                 </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {request.email || request.userEmail}
-                                                </p>
-                                            </td>
-
-                                            <td className="text-gray-700">
-                                                {request.phone || "—"}
-                                            </td>
-
-                                            <td className="text-gray-700">
-                                                {formatDate(request.createdAt)}
-                                            </td>
-
-                                            <td>
-                                                <span className={statusBadge[status]}>
+                                                <span className={`${statusBadge[status]} shrink-0`}>
                                                     {status}
                                                 </span>
-                                            </td>
+                                            </div>
 
-                                            <td>
-                                                <div className="flex justify-end gap-2">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelected(request)}
-                                                        title="View details"
-                                                        aria-label="View request details"
-                                                        className="btn btn-sm btn-ghost btn-square text-gray-600"
-                                                    >
-                                                        <FiEye className="text-lg" />
-                                                    </button>
+                                            <p className="mt-0.5 truncate text-sm text-gray-700">
+                                                {requesterName(request)}
+                                            </p>
+                                            <p className="truncate text-xs text-gray-500">
+                                                {requesterEmail(request)}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleAccept(request)}
-                                                        disabled={!isPending}
-                                                        title="Accept"
-                                                        aria-label="Accept request"
-                                                        className="btn btn-sm btn-ghost btn-square text-green-600 disabled:opacity-30"
-                                                    >
-                                                        <FiCheck className="text-lg" />
-                                                    </button>
+                                    <p className="mt-3 text-xs text-gray-500">
+                                        {[request.phone, formatDate(request.createdAt)]
+                                            .filter(Boolean)
+                                            .join(" · ")}
+                                    </p>
 
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleReject(request)}
-                                                        disabled={!isPending}
-                                                        title="Reject"
-                                                        aria-label="Reject request"
-                                                        className="btn btn-sm btn-ghost btn-square text-red-500 disabled:opacity-30"
-                                                    >
-                                                        <FiX className="text-lg" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                    <div className="mt-3 flex flex-wrap justify-end gap-1 border-t border-gray-50 pt-3">
+                                        {renderActions(request, true)}
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+
+                    {/* Tablet and up: table */}
+                    <div className="hidden overflow-hidden rounded-3xl border border-gray-100 bg-white md:block">
+                        <div className="overflow-x-auto">
+                            <table className="table">
+                                <thead>
+                                    <tr className="border-b border-gray-100 text-xs text-gray-500">
+                                        <th>Pet</th>
+                                        <th>Requester</th>
+                                        <th className="hidden xl:table-cell">Phone</th>
+                                        <th className="hidden xl:table-cell">Requested on</th>
+                                        <th>Status</th>
+                                        <th className="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {visibleRequests.map((request) => {
+                                        const status = getStatus(request);
+
+                                        return (
+                                            <tr
+                                                key={request._id}
+                                                className="border-b border-gray-50 last:border-0"
+                                            >
+                                                <td>
+                                                    <div className="flex items-center gap-3">
+                                                        {petAvatar(request, "h-12 w-12")}
+                                                        <p className="font-semibold text-gray-900">
+                                                            {request.petName || "Pet"}
+                                                        </p>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <p className="font-medium text-gray-900">
+                                                        {requesterName(request)}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {requesterEmail(request)}
+                                                    </p>
+                                                    <p className="mt-0.5 text-xs text-gray-400 xl:hidden">
+                                                        {[request.phone, formatDate(request.createdAt)]
+                                                            .filter(Boolean)
+                                                            .join(" · ")}
+                                                    </p>
+                                                </td>
+
+                                                <td className="hidden text-gray-700 xl:table-cell">
+                                                    {request.phone || "—"}
+                                                </td>
+
+                                                <td className="hidden text-gray-700 xl:table-cell">
+                                                    {formatDate(request.createdAt)}
+                                                </td>
+
+                                                <td>
+                                                    <span className={statusBadge[status]}>
+                                                        {status}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    <div className="flex justify-end gap-2">
+                                                        {renderActions(request)}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </>
             )}
 
-            {/* Details modal */}
+            {/* Details modal: bottom sheet on phones, centered dialog from sm up */}
             {selected && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+                    className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:px-4"
                     onClick={() => setSelected(null)}
                 >
                     <div
-                        className="w-full max-w-lg rounded-3xl bg-base-100 p-6 shadow-2xl md:p-8"
+                        role="dialog"
+                        aria-modal="true"
+                        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-base-100 p-5 shadow-2xl sm:rounded-3xl sm:p-6 md:p-8"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="mb-5 flex items-start justify-between">
-                            <div>
-                                <h2 className="text-xl font-bold">
+                        <div className="mb-5 flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                                <h2 className="break-words text-lg font-bold sm:text-xl">
                                     Request for {selected.petName || "this pet"}
                                 </h2>
                                 <p className="mt-1 text-sm text-gray-500">
@@ -321,7 +403,7 @@ const AdoptionRequests = () => {
                                 type="button"
                                 onClick={() => setSelected(null)}
                                 aria-label="Close"
-                                className="btn btn-sm btn-circle btn-ghost"
+                                className="btn btn-sm btn-circle btn-ghost shrink-0"
                             >
                                 <FiX className="text-lg" />
                             </button>
@@ -330,14 +412,14 @@ const AdoptionRequests = () => {
                         <dl className="space-y-3 text-sm">
                             <div>
                                 <dt className="text-gray-500">Name</dt>
-                                <dd className="font-medium">
-                                    {selected.name || selected.userName || "—"}
+                                <dd className="break-words font-medium">
+                                    {requesterName(selected)}
                                 </dd>
                             </div>
                             <div>
                                 <dt className="text-gray-500">Email</dt>
-                                <dd className="font-medium">
-                                    {selected.email || selected.userEmail || "—"}
+                                <dd className="break-all font-medium">
+                                    {requesterEmail(selected) || "—"}
                                 </dd>
                             </div>
                             <div>
@@ -346,18 +428,20 @@ const AdoptionRequests = () => {
                             </div>
                             <div>
                                 <dt className="text-gray-500">Address</dt>
-                                <dd className="font-medium">{selected.address || "—"}</dd>
+                                <dd className="break-words font-medium">
+                                    {selected.address || "—"}
+                                </dd>
                             </div>
                             {selected.message && (
                                 <div>
                                     <dt className="text-gray-500">Message</dt>
-                                    <dd className="font-medium">{selected.message}</dd>
+                                    <dd className="break-words font-medium">{selected.message}</dd>
                                 </div>
                             )}
                         </dl>
 
                         {getStatus(selected) === "pending" && (
-                            <div className="mt-7 flex gap-3">
+                            <div className="mt-6 flex flex-col-reverse gap-3 sm:mt-7 sm:flex-row">
                                 <button
                                     type="button"
                                     onClick={() => handleReject(selected)}

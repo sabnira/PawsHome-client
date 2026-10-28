@@ -1,140 +1,191 @@
-import { Link, NavLink } from "react-router-dom";
-import { FiMoon, FiSun } from "react-icons/fi";
+import { useContext } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { FiMoon, FiSun, FiMenu, FiLogOut, FiGrid, FiUser, FiChevronDown } from "react-icons/fi";
 import { FaPaw } from "react-icons/fa";
-import { MdArrowDropDown} from "react-icons/md";
-import { useContext} from "react";
-
-import { CgProfile } from "react-icons/cg";
 import { AuthContext } from "../../../providers/AuthProvider";
 
-
-const navLinks = [
+const publicLinks = [
     { to: "/", label: "Home" },
     { to: "/pet-listing", label: "Pet listing" },
     { to: "/donation-pets", label: "Donation campaigns" },
-    { to: "/dashboard", label: "Dashboard" },
-]
+];
+
+const linkStyle = ({ isActive }) =>
+    `rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-150
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F7C948]
+    ${
+        isActive
+            ? "bg-[#F7C948] text-gray-900"
+            : "text-white/75 hover:bg-white/10 hover:text-white"
+    }`;
 
 const Navbar = () => {
-
     const { user, logOut } = useContext(AuthContext);
+    const navigate = useNavigate();
 
+    const navLinks = user
+        ? [...publicLinks, { to: "/dashboard", label: "Dashboard" }]
+        : publicLinks;
+
+    // DaisyUI dropdowns stay open while focused, so drop focus after a choice
+    const closeDropdown = () => document.activeElement?.blur();
+
+    const handleLogout = async () => {
+        closeDropdown();
+        try {
+            await logOut();
+            navigate("/", { replace: true });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+// #195f35 #002842
     return (
-        <div className="navbar bg-base-100">
-            <div className="navbar-start">
-                <div className="dropdown">
-                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
+        <header className="py-4 px-4 md:px-0 ">
+            <div className="flex items-center justify-between rounded-full bg-[#14342A] py-2 pl-3 pr-2.5 shadow-lg shadow-[#14342A]/20 sm:pl-4">
+                {/* Left: mobile menu + logo */}
+                <div className="flex items-center gap-1">
+                    <div className="dropdown">
+                        <div
+                            tabIndex={0}
+                            role="button"
+                            aria-label="Open menu"
+                            className="btn btn-ghost btn-circle btn-sm text-white hover:bg-white/10 lg:hidden"
+                        >
+                            <FiMenu className="text-xl" />
+                        </div>
+
+                        <ul
+                            tabIndex={-1}
+                            className="dropdown-content z-50 mt-5 w-64 space-y-1 rounded-3xl bg-[#14342A] p-3 shadow-xl"
+                        >
+                            {navLinks.map(({ to, label }) => (
+                                <li key={to}>
+                                    <NavLink
+                                        to={to}
+                                        end={to === "/"}
+                                        onClick={closeDropdown}
+                                        className={({ isActive }) =>
+                                            `block ${linkStyle({ isActive })} !rounded-2xl !py-3`
+                                        }
+                                    >
+                                        {label}
+                                    </NavLink>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <ul
-                        tabIndex="-1"
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
 
-                        {navLinks.map(({ to, label }) => (
-                            <li key={to}>
-                                <NavLink to={to}>{label}</NavLink>
-                            </li>
-                        ))}
-
-                    </ul>
+                    <Link
+                        to="/"
+                        className="flex items-center gap-2.5 font-berkshire text-xl font-extrabold text-white"
+                    >
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F7C948] text-base text-gray-900">
+                            <FaPaw />
+                        </span>
+                        <span className="hidden sm:inline">PawsHome</span>
+                    </Link>
                 </div>
 
-                <a className="btn btn-ghost text-2xl font-berkshire">
-                    <FaPaw className="text-green-500"></FaPaw>
-                    PawsHome
-                </a>
+                {/* Center: desktop links */}
+                <nav aria-label="Main" className="hidden lg:block">
+                    <ul className="flex items-center gap-1">
+                        {navLinks.map(({ to, label }) => (
+                            <li key={to}>
+                                <NavLink to={to} end={to === "/"} className={linkStyle}>
+                                    {label}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
 
-            </div>
-            <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1">
-                    {navLinks.map(({ to, label }) => (
-                        <li key={to} className="text-lg font-bold">
-                            <NavLink to={to} className={({ isActive }) => isActive ? " text-warning mr-2" : "mr-2"}>
-                                {label}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="navbar-end gap-2 lg:gap-6">
+                {/* Right: theme toggle + account */}
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                    <label
+                        className="btn btn-ghost btn-circle btn-sm swap swap-rotate text-white hover:bg-white/10"
+                        title="Toggle dark mode"
+                    >
+                        <input
+                            type="checkbox"
+                            className="theme-controller"
+                            value="dark"
+                            aria-label="Toggle dark mode"
+                        />
+                        <FiMoon className="swap-off h-5 w-5" />
+                        <FiSun className="swap-on h-5 w-5" />
+                    </label>
 
-                {/* Dark mode */}
-                <label className="swap swap-rotate">
-
-                    <input type="checkbox" className="theme-controller" value="dark" />
-
-                    <FiSun className="swap-off h-6 w-6 fill-current"></FiSun>
-
-                    <FiMoon className="swap-on h-6 w-6 fill-current"></FiMoon>
-                </label>
-
-
-                {
-                    user ?
-                        <>
-                            <div className="dropdown dropdown-end">
-
-                                <div tabIndex={0} role="button" className="m-2 px-6 py-2 rounded-4xl border-2 border-gray-300">
-                                    <div className="flex items-end">
-                                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-3xl overflow-hidden ring-2 ring-green-400 shadow-[0_0_15px_rgba(59,130,246,0.8)]">
-                                            {user?.photoURL ? (
-                                                <img
-                                                    referrerPolicy='no-referrer'
-                                                    className="w-full h-full object-cover"
-                                                    src={user.photoURL}
-                                                    alt="User Profile"
-                                                />
-                                            ) : (
-                                                <CgProfile className="w-full h-full" />
-                                            )}
+                    {user ? (
+                        <div className="dropdown dropdown-end">
+                            <div
+                                tabIndex={0}
+                                role="button"
+                                aria-label="Account menu"
+                                className="flex cursor-pointer items-center gap-1.5 rounded-full bg-white/10 py-1 pl-1 pr-3 transition hover:bg-white/15"
+                            >
+                                <div className="h-8 w-8 overflow-hidden rounded-full ring-2 ring-[#F7C948]">
+                                    {user.photoURL ? (
+                                        <img
+                                            referrerPolicy="no-referrer"
+                                            className="h-full w-full object-cover"
+                                            src={user.photoURL}
+                                            alt={user.displayName || "User"}
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-[#F7C948] text-gray-900">
+                                            <FiUser />
                                         </div>
+                                    )}
+                                </div>
+                                <FiChevronDown className="text-white/70" />
+                            </div>
 
-                                        <MdArrowDropDown className="text-2xl text-black"></MdArrowDropDown> 
-
-                                    </div>
+                            <div
+                                tabIndex={-1}
+                                className="dropdown-content z-50 mt-5 w-64 rounded-2xl border border-base-200 bg-base-100 p-2 shadow-xl"
+                            >
+                                <div className="px-3 py-3">
+                                    <p className="truncate text-sm font-semibold">
+                                        {user.displayName || "PawsHome User"}
+                                    </p>
+                                    <p className="truncate text-xs text-base-content/50">
+                                        {user.email}
+                                    </p>
                                 </div>
 
-                                <ul tabIndex="-1" className="dropdown-content menu bg-base-200 rounded-box z-1 w-56 p-4 shadow-sm ">
+                                <div className="my-1 border-t border-base-200"></div>
 
-                                    <div className=" flex text-center items-center gap-3 mb-2">
-                                        <div className="w-7 h-7 md:w-10 md:h-10 rounded-3xl overflow-hidden ring-2 ring-green-400">
-                                            {user?.photoURL ? (
-                                                <img
-                                                    referrerPolicy='no-referrer'
-                                                    className="w-full h-full object-cover"
-                                                    src={user.photoURL}
-                                                    alt="User Profile"
-                                                />
-                                            ) : (
-                                                <CgProfile className="w-full h-full" />
-                                            )}
-                                        </div>
+                                <Link
+                                    to="/dashboard"
+                                    onClick={closeDropdown}
+                                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium hover:bg-base-200"
+                                >
+                                    <FiGrid className="text-lg" />
+                                    Dashboard
+                                </Link>
 
-                                        <p>{user?.displayName}</p>
-                                    </div>
-
-                                    <div className="divider m-0"></div>
-
-                                    <Link to="/dashboard" className="btn btn-ghost btn-sm lg:btn-md my-2 rounded-4xl">
-                                        Dashboard
-                                    </Link>
-
-                                    <button onClick={logOut} className="btn bg-green-500 hover:bg-green-600 text-white btn-sm lg:btn-md border-none rounded-4xl">
-                                        Logout
-                                    </button>
-
-                                </ul>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-500/10"
+                                >
+                                    <FiLogOut className="text-lg" />
+                                    Log out
+                                </button>
                             </div>
-                        </>
-                        :
-                        <>
-
-                            <Link to="/login" className="btn bg-green-500 hover:bg-green-600 text-white btn-sm border-none">Login</Link>
-                        </>
-                }
-
+                        </div>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="btn btn-sm h-10 rounded-full border-none bg-[#F7C948] px-6 font-bold text-gray-900 hover:bg-[#EEBA2C]"
+                        >
+                            Login
+                        </Link>
+                    )}
+                </div>
             </div>
-        </div>
+        </header>
     );
 };
 
