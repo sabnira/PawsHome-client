@@ -116,15 +116,71 @@ const AllPets = () => {
         }
     };
 
+    const statusBadge = (pet) =>
+        pet.adopted ? (
+            <span className="badge badge-success badge-soft shrink-0">Adopted</span>
+        ) : (
+            <span className="badge badge-warning badge-soft shrink-0">Available</span>
+        );
+
+    // Icon-only buttons in the table, labelled buttons in the mobile cards
+    const renderActions = (pet, labeled = false) => {
+        const square = labeled ? "" : "btn-square";
+
+        return (
+            <>
+                <button
+                    type="button"
+                    onClick={() => handleToggleAdopted(pet)}
+                    title={pet.adopted ? "Mark as available" : "Mark as adopted"}
+                    aria-label={
+                        pet.adopted
+                            ? `Mark ${pet.name} as available`
+                            : `Mark ${pet.name} as adopted`
+                    }
+                    className={`btn btn-sm btn-ghost text-green-600 ${square}`}
+                >
+                    {pet.adopted ? (
+                        <FiRotateCcw className="text-lg" />
+                    ) : (
+                        <FiCheckCircle className="text-lg" />
+                    )}
+                    {labeled && (pet.adopted ? "Available" : "Adopted")}
+                </button>
+
+                <Link
+                    to={`/dashboard/update-pet/${pet._id}`}
+                    title="Edit pet"
+                    aria-label={`Edit ${pet.name}`}
+                    className={`btn btn-sm btn-ghost text-gray-600 ${square}`}
+                >
+                    <FiEdit2 className="text-lg" />
+                    {labeled && "Edit"}
+                </Link>
+
+                <button
+                    type="button"
+                    onClick={() => handleDelete(pet)}
+                    title="Delete pet"
+                    aria-label={`Delete ${pet.name}`}
+                    className={`btn btn-sm btn-ghost text-red-500 ${square}`}
+                >
+                    <FiTrash2 className="text-lg" />
+                    {labeled && "Delete"}
+                </button>
+            </>
+        );
+    };
+
     if (isLoading) {
         return <Loading />;
     }
 
     if (isError) {
         return (
-            <div className="rounded-3xl border border-red-100 bg-red-50 px-6 py-10 text-center">
+            <div className="rounded-3xl border border-red-100 bg-red-50 px-4 py-8 text-center sm:px-6 sm:py-10">
                 <h2 className="text-lg font-semibold text-red-600">Could not load pets</h2>
-                <p className="mt-2 text-sm text-red-500">
+                <p className="mt-2 break-words text-sm text-red-500">
                     {error.response?.data?.message || error.message}
                 </p>
             </div>
@@ -138,7 +194,7 @@ const AllPets = () => {
             </Helmet>
 
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">All Pets</h1>
                 <p className="mt-1 text-sm text-gray-500">
                     {counts.all} {counts.all === 1 ? "pet" : "pets"} listed by all users,{" "}
@@ -147,17 +203,17 @@ const AllPets = () => {
             </div>
 
             {/* Filters */}
-            <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                 <div className="flex flex-col gap-3 sm:flex-row">
                     <label className="input input-bordered flex w-full items-center gap-2 rounded-xl sm:w-72">
-                        <FiSearch className="text-gray-400" />
+                        <FiSearch className="shrink-0 text-gray-400" />
                         <input
                             type="search"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by pet or owner email"
                             aria-label="Search pets"
-                            className="grow"
+                            className="min-w-0 grow"
                         />
                     </label>
 
@@ -176,7 +232,11 @@ const AllPets = () => {
                     </select>
                 </div>
 
-                <div role="tablist" className="flex flex-wrap gap-2">
+                {/* Status tabs: scroll sideways on narrow phones */}
+                <div
+                    role="tablist"
+                    className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+                >
                     {STATUS_TABS.map((name) => (
                         <button
                             key={name}
@@ -184,7 +244,7 @@ const AllPets = () => {
                             role="tab"
                             aria-selected={status === name}
                             onClick={() => setStatus(name)}
-                            className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
+                            className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium capitalize transition ${
                                 status === name
                                     ? "bg-[#F7C948] text-black"
                                     : "bg-white text-gray-600 hover:bg-[#FFF8E1]"
@@ -198,133 +258,152 @@ const AllPets = () => {
 
             {/* Empty state */}
             {visiblePets.length === 0 ? (
-                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-6 py-16 text-center">
+                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-4 py-12 text-center sm:px-6 sm:py-16">
                     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#FFF8E1] text-2xl text-[#D99A00]">
                         <FaPaw />
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-900">No pets found</h2>
+                    <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
+                        No pets found
+                    </h2>
                     <p className="mt-2 max-w-sm text-sm text-gray-500">
                         Try a different search, category or status.
                     </p>
                 </div>
             ) : (
-                <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white">
-                    <div className="overflow-x-auto">
-                        <table className="table">
-                            <thead>
-                                <tr className="border-b border-gray-100 text-xs text-gray-500">
-                                    <th className="w-12">#</th>
-                                    <th>Pet</th>
-                                    <th>Category</th>
-                                    <th>Owner</th>
-                                    <th>Adoption fee</th>
-                                    <th>Status</th>
-                                    <th className="text-right">Actions</th>
-                                </tr>
-                            </thead>
+                <>
+                    {/* Mobile: cards */}
+                    <ul className="space-y-3 md:hidden">
+                        {visiblePets.map((pet) => (
+                            <li
+                                key={pet._id}
+                                className="rounded-3xl border border-gray-100 bg-white p-4"
+                            >
+                                <div className="flex gap-3">
+                                    <div className="avatar shrink-0">
+                                        <div className="h-20 w-20 rounded-2xl">
+                                            <img
+                                                src={pet.image}
+                                                alt={pet.name}
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    </div>
 
-                            <tbody>
-                                {visiblePets.map((pet, index) => (
-                                    <tr
-                                        key={pet._id}
-                                        className="border-b border-gray-50 last:border-0"
-                                    >
-                                        <td className="text-gray-400">{index + 1}</td>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <p className="truncate font-semibold text-gray-900">
+                                                {pet.name}
+                                            </p>
+                                            {statusBadge(pet)}
+                                        </div>
 
-                                        <td>
-                                            <div className="flex items-center gap-3">
-                                                <div className="avatar">
-                                                    <div className="h-14 w-14 rounded-2xl">
-                                                        <img
-                                                            src={pet.image}
-                                                            alt={pet.name}
-                                                            className="object-cover"
-                                                        />
+                                        <p className="mt-0.5 text-xs text-gray-500">
+                                            {[pet.category, pet.age, pet.location]
+                                                .filter(Boolean)
+                                                .join(" · ")}
+                                        </p>
+
+                                        <p className="mt-0.5 truncate text-xs text-gray-400">
+                                            Owner: {pet.ownerEmail || "—"}
+                                        </p>
+
+                                        <p className="mt-2 text-sm font-semibold text-gray-900">
+                                            ${pet.price}{" "}
+                                            <span className="font-normal text-gray-500">
+                                                adoption fee
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-3 flex flex-wrap justify-end gap-1 border-t border-gray-50 pt-3">
+                                    {renderActions(pet, true)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+
+                    {/* Tablet and up: table */}
+                    <div className="hidden overflow-hidden rounded-3xl border border-gray-100 bg-white md:block">
+                        <div className="overflow-x-auto">
+                            <table className="table">
+                                <thead>
+                                    <tr className="border-b border-gray-100 text-xs text-gray-500">
+                                        <th className="hidden w-12 xl:table-cell">#</th>
+                                        <th>Pet</th>
+                                        <th className="hidden xl:table-cell">Category</th>
+                                        <th className="hidden xl:table-cell">Owner</th>
+                                        <th>Adoption fee</th>
+                                        <th>Status</th>
+                                        <th className="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {visiblePets.map((pet, index) => (
+                                        <tr
+                                            key={pet._id}
+                                            className="border-b border-gray-50 last:border-0"
+                                        >
+                                            <td className="hidden text-gray-400 xl:table-cell">
+                                                {index + 1}
+                                            </td>
+
+                                            <td>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="avatar shrink-0">
+                                                        <div className="h-14 w-14 rounded-2xl">
+                                                            <img
+                                                                src={pet.image}
+                                                                alt={pet.name}
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="font-semibold text-gray-900">
+                                                            {pet.name}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {pet.age} old · {pet.location}
+                                                            <span className="xl:hidden">
+                                                                {" "}
+                                                                · {pet.category}
+                                                            </span>
+                                                        </p>
+                                                        <p className="break-all text-xs text-gray-400 xl:hidden">
+                                                            {pet.ownerEmail || "—"}
+                                                        </p>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold text-gray-900">
-                                                        {pet.name}
-                                                    </p>
-                                                    <p className="text-xs text-gray-500">
-                                                        {pet.age} old · {pet.location}
-                                                    </p>
+                                            </td>
+
+                                            <td className="hidden text-gray-700 xl:table-cell">
+                                                {pet.category}
+                                            </td>
+
+                                            <td className="hidden text-sm text-gray-700 xl:table-cell">
+                                                {pet.ownerEmail || "—"}
+                                            </td>
+
+                                            <td className="font-semibold text-gray-900">
+                                                ${pet.price}
+                                            </td>
+
+                                            <td>{statusBadge(pet)}</td>
+
+                                            <td>
+                                                <div className="flex justify-end gap-2">
+                                                    {renderActions(pet)}
                                                 </div>
-                                            </div>
-                                        </td>
-
-                                        <td className="text-gray-700">{pet.category}</td>
-
-                                        <td className="text-sm text-gray-700">
-                                            {pet.ownerEmail || "—"}
-                                        </td>
-
-                                        <td className="font-semibold text-gray-900">
-                                            ${pet.price}
-                                        </td>
-
-                                        <td>
-                                            {pet.adopted ? (
-                                                <span className="badge badge-success badge-soft">
-                                                    Adopted
-                                                </span>
-                                            ) : (
-                                                <span className="badge badge-warning badge-soft">
-                                                    Available
-                                                </span>
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            <div className="flex justify-end gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleToggleAdopted(pet)}
-                                                    title={
-                                                        pet.adopted
-                                                            ? "Mark as available"
-                                                            : "Mark as adopted"
-                                                    }
-                                                    aria-label={
-                                                        pet.adopted
-                                                            ? `Mark ${pet.name} as available`
-                                                            : `Mark ${pet.name} as adopted`
-                                                    }
-                                                    className="btn btn-sm btn-ghost btn-square text-green-600"
-                                                >
-                                                    {pet.adopted ? (
-                                                        <FiRotateCcw className="text-lg" />
-                                                    ) : (
-                                                        <FiCheckCircle className="text-lg" />
-                                                    )}
-                                                </button>
-
-                                                <Link
-                                                    to={`/dashboard/update-pet/${pet._id}`}
-                                                    title="Edit pet"
-                                                    aria-label={`Edit ${pet.name}`}
-                                                    className="btn btn-sm btn-ghost btn-square text-gray-600"
-                                                >
-                                                    <FiEdit2 className="text-lg" />
-                                                </Link>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleDelete(pet)}
-                                                    title="Delete pet"
-                                                    aria-label={`Delete ${pet.name}`}
-                                                    className="btn btn-sm btn-ghost btn-square text-red-500"
-                                                >
-                                                    <FiTrash2 className="text-lg" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </>
             )}
         </div>
     );

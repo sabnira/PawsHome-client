@@ -43,11 +43,11 @@ const MyDonation = () => {
 
     if (isError) {
         return (
-            <div className="rounded-3xl border border-red-100 bg-red-50 px-6 py-10 text-center">
+            <div className="rounded-3xl border border-red-100 bg-red-50 px-4 py-8 text-center sm:px-6 sm:py-10">
                 <h2 className="text-lg font-semibold text-red-600">
                     Could not load your donations
                 </h2>
-                <p className="mt-2 text-sm text-red-500">
+                <p className="mt-2 break-words text-sm text-red-500">
                     {error.response?.data?.message || error.message}
                 </p>
             </div>
@@ -57,6 +57,13 @@ const MyDonation = () => {
     const totalDonated = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
     const petsSupported = new Set(donations.map((d) => d.campaignId)).size;
 
+    const stats = [
+        // Total donated spans the full row on phones so the three cards fit
+        { label: "Total donated", value: formatMoney(totalDonated), wide: true },
+        { label: "Donations made", value: donations.length },
+        { label: "Pets supported", value: petsSupported },
+    ];
+
     return (
         <div>
             <Helmet>
@@ -64,7 +71,7 @@ const MyDonation = () => {
             </Helmet>
 
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
                     My Donations
                 </h1>
@@ -74,11 +81,11 @@ const MyDonation = () => {
             </div>
 
             {donations.length === 0 ? (
-                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-6 py-16 text-center">
+                <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white px-4 py-12 text-center sm:px-6 sm:py-16">
                     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#FFF8E1] text-2xl text-[#D99A00]">
                         <FaHandHoldingHeart />
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
                         You haven't donated yet
                     </h2>
                     <p className="mt-2 max-w-sm text-sm text-gray-500">
@@ -94,34 +101,68 @@ const MyDonation = () => {
             ) : (
                 <>
                     {/* Summary */}
-                    <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                        <div className="rounded-3xl border border-gray-100 bg-white p-5">
-                            <p className="text-sm text-gray-500">Total donated</p>
-                            <p className="mt-1 text-2xl font-bold text-gray-900">
-                                {formatMoney(totalDonated)}
-                            </p>
-                        </div>
-                        <div className="rounded-3xl border border-gray-100 bg-white p-5">
-                            <p className="text-sm text-gray-500">Donations made</p>
-                            <p className="mt-1 text-2xl font-bold text-gray-900">
-                                {donations.length}
-                            </p>
-                        </div>
-                        <div className="rounded-3xl border border-gray-100 bg-white p-5">
-                            <p className="text-sm text-gray-500">Pets supported</p>
-                            <p className="mt-1 text-2xl font-bold text-gray-900">
-                                {petsSupported}
-                            </p>
-                        </div>
+                    <div className="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:grid-cols-3 sm:gap-4">
+                        {stats.map(({ label, value, wide }) => (
+                            <div
+                                key={label}
+                                className={`min-w-0 rounded-3xl border border-gray-100 bg-white p-4 sm:col-span-1 sm:p-5 ${
+                                    wide ? "col-span-2" : ""
+                                }`}
+                            >
+                                <p className="text-xs text-gray-500 sm:text-sm">{label}</p>
+                                <p className="mt-1 truncate text-2xl font-bold text-gray-900">
+                                    {value}
+                                </p>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* Table */}
-                    <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white">
+                    {/* Mobile: cards */}
+                    <ul className="space-y-3 md:hidden">
+                        {donations.map((donation) => (
+                            <li
+                                key={donation._id}
+                                className="rounded-3xl border border-gray-100 bg-white p-4"
+                            >
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="truncate font-semibold text-gray-900">
+                                            {donation.petName}
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                            {formatDate(donation.donatedAt)}
+                                        </p>
+                                    </div>
+                                    <p className="shrink-0 text-lg font-bold text-gray-900">
+                                        {formatMoney(donation.amount)}
+                                    </p>
+                                </div>
+
+                                <code className="mt-3 block break-all rounded-lg bg-gray-50 px-2 py-1 text-xs text-gray-600">
+                                    {donation.transactionId}
+                                </code>
+
+                                <div className="mt-3 border-t border-gray-50 pt-3">
+                                    <Link
+                                        to={`/donation-details/${donation.campaignId}`}
+                                        aria-label={`View ${donation.petName} campaign`}
+                                        className="btn btn-sm btn-ghost w-full text-gray-600"
+                                    >
+                                        <FiEye className="text-lg" />
+                                        View campaign
+                                    </Link>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+
+                    {/* Tablet and up: table */}
+                    <div className="hidden overflow-hidden rounded-3xl border border-gray-100 bg-white md:block">
                         <div className="overflow-x-auto">
                             <table className="table">
                                 <thead>
                                     <tr className="border-b border-gray-100 text-xs text-gray-500">
-                                        <th className="w-12">#</th>
+                                        <th className="hidden w-12 xl:table-cell">#</th>
                                         <th>Pet</th>
                                         <th>Amount</th>
                                         <th>Date</th>
@@ -136,7 +177,9 @@ const MyDonation = () => {
                                             key={donation._id}
                                             className="border-b border-gray-50 last:border-0"
                                         >
-                                            <td className="text-gray-400">{index + 1}</td>
+                                            <td className="hidden text-gray-400 xl:table-cell">
+                                                {index + 1}
+                                            </td>
 
                                             <td className="font-semibold text-gray-900">
                                                 {donation.petName}
