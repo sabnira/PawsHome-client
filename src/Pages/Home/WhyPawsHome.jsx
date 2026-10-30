@@ -82,7 +82,7 @@ const WhyPawsHome = () => {
                 </div>
 
                 {/* Feature cards */}
-                <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
+                <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2 pt-6">
                     {features.map((feature) => (
                         <div
                             key={feature.title}

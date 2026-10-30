@@ -3,6 +3,7 @@ import Banner from "./Banner/Banner";
 import FeaturedPets from "./FeaturedPets/FeaturedPets";
 import WhyPawsHome from "./WhyPawsHome";
 import AdoptionCTA from "./AdoptionCTA";
+import DonationCampaigns from "./Donationcampaigns";
 
 
 
@@ -16,6 +17,7 @@ const Home = () => {
             <div className="max-w-7xl mx-auto">
                 <FeaturedPets></FeaturedPets>
                 <WhyPawsHome></WhyPawsHome>
+                <DonationCampaigns></DonationCampaigns>
                 <AdoptionCTA></AdoptionCTA>
             </div>
             

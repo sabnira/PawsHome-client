@@ -9,7 +9,7 @@ const FeaturedPets = () => {
 
     const [pets] = usePets();
 
-    const featuredPets = pets.slice(0, 6);
+    const featuredPets = pets.slice(0, 3);
 
     return (
         <div>
