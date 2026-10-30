@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { FaLock, FaPaw } from "react-icons/fa";
+import { FaPaw } from "react-icons/fa";
 import { MdArrowRightAlt } from "react-icons/md";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import SectionTitle from "../../components/SectionTitle";
@@ -50,7 +50,7 @@ const DonationCampaigns = () => {
 
                 <div className="relative">
 
-                    {/* Stats + trust strip */}
+                    {/* Stats  */}
                     {!isLoading && campaigns.length > 0 && (
                         <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
                             <span className="badge badge-lg gap-2 border-warning/40 bg-base-100 py-4">
@@ -60,10 +60,7 @@ const DonationCampaigns = () => {
                             <span className="badge badge-lg gap-2 border-warning/40 bg-base-100 py-4 font-semibold">
                                 ${totalRaised.toLocaleString()} raised so far
                             </span>
-                            <span className="badge badge-lg gap-2 border-warning/40 bg-base-100 py-4">
-                                <FaLock className="text-warning" />
-                                Secure payments with Stripe
-                            </span>
+                           
                         </div>
                     )}
 
