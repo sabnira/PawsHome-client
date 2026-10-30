@@ -16,7 +16,7 @@ const FeaturedPets = () => {
 
             <SectionTitle
                 title={"Featured Pets"}
-                heading={"Browse a curated selection of pets ready to be adopted. Each one is healthy, well-loved, and eagerly waiting for a forever home filled with care and affection."}
+                heading={"Browse a curated selection of pets ready to be adopted. Each one is healthy and eagerly waiting for a forever home filled with care and affection."}
             ></SectionTitle>
 
             <div className="grid md:grid-cols-3 gap-12">
