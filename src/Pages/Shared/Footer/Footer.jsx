@@ -37,8 +37,8 @@ const Footer = () => {
     return (
         <footer className="bg-neutral text-neutral-content">
 
-            {/* Warm accent line */}
-            <div className="h-1.5 bg-gradient-to-r from-warning/0 via-warning to-warning/0"></div>
+           
+            <div className="h-1.5 bg-linear-to-r from-warning/0 via-warning to-warning/0"></div>
 
             <div className="mx-auto max-w-7xl px-4 pb-8 pt-16 sm:px-6 lg:px-8">
 

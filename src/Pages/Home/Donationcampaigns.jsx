@@ -54,7 +54,7 @@ const DonationCampaigns = () => {
                             <span className="badge badge-lg gap-2 border-warning/40 bg-base-100 py-4 font-semibold">
                                 ${totalRaised.toLocaleString()} raised so far
                             </span>
-                           
+
                         </div>
                     )}
 
@@ -91,16 +91,20 @@ const DonationCampaigns = () => {
                         </div>
                     )}
 
-                    {/* CTA */}
+
+
                     <div className="mt-12 flex justify-center">
+
                         <Link
-                            to={`/donation-pets`}
-                            className="btn btn-warning group rounded-full px-8 text-black"
+                            to="/donation-pets"
+                            className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-warning/10 font-semibold transition-all duration-300 hover:bg-warning hover:gap-3"
                         >
                             See all campaigns
                             <MdArrowRightAlt className="text-xl transition-transform duration-300 group-hover:translate-x-1" />
                         </Link>
+
                     </div>
+
                 </div>
             </div>
         </section>

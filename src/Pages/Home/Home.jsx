@@ -5,6 +5,7 @@ import WhyPawsHome from "./WhyPawsHome";
 import AdoptionCTA from "./AdoptionCTA";
 import Testimonials from "./Testimonials ";
 import DonationCampaigns from "./DonationCampaigns";
+import Stats from "./Stats";
 
 
 
@@ -21,6 +22,7 @@ const Home = () => {
                 <WhyPawsHome></WhyPawsHome>
                 <Testimonials></Testimonials>
                 <DonationCampaigns></DonationCampaigns>
+                <Stats></Stats>
                 <AdoptionCTA></AdoptionCTA>
             </div>
             

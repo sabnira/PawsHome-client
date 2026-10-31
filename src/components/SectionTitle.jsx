@@ -1,29 +1,32 @@
 import { FaPaw } from "react-icons/fa";
 
-const SectionTitle = ({ title, heading }) => {
+const SectionTitle = ({ title }) => {
+    // Highlight the last word of the title
+    const words = title.trim().split(" ");
+    const lastWord = words.pop();
+    const rest = words.join(" ");
+
     return (
-        <header className="mx-auto my-12 max-w-2xl px-4 text-center md:my-16">
+        <header className="mx-auto my-10 max-w-3xl px-4 text-center md:my-24 font-dmSans">
 
-            {/* Paw divider: lines fade out on both sides of a soft paw badge */}
-            <div aria-hidden="true" className="mb-6 flex items-center justify-center gap-4">
-                <span className="h-px w-16 bg-gradient-to-r from-transparent to-warning/60 sm:w-24"></span>
+            {/* Small paw mark */}
+            <FaPaw
+                aria-hidden="true"
+                className="mx-auto mb-4 -rotate-12 text-lg text-warning"
+            />
 
-                <span className="flex h-12 w-12 -rotate-12 items-center justify-center rounded-full bg-warning/15 text-xl text-warning ring-4 ring-warning/10">
-                    <FaPaw />
+            <h2 className="isolate text-balance text-3xl leading-tight tracking-tight text-base-content sm:text-4xl md:text-5xl  font-extrabold">
+                {rest && <>{rest} </>}
+
+                {/* Highlighter underline behind the last word */}
+                <span className="relative inline-block">
+                    {lastWord}
+                    <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-1 -z-10 h-2.5 rounded-full bg-warning/50 md:bottom-1.5 md:h-3"
+                    ></span>
                 </span>
-
-                <span className="h-px w-16 bg-gradient-to-l from-transparent to-warning/60 sm:w-24"></span>
-            </div>
-
-            <h2 className="text-balance text-3xl font-extrabold leading-tight tracking-tight text-base-content sm:text-4xl md:text-5xl">
-                {title}
             </h2>
-
-            {heading && (
-                <p className="mx-auto mt-4 max-w-xl text-pretty text-base leading-7 text-base-content/70 md:text-lg md:leading-8">
-                    {heading}
-                </p>
-            )}
         </header>
     );
 };
