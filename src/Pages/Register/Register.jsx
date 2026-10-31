@@ -20,7 +20,7 @@ const Register = () => {
     const {
         register,
         handleSubmit,
-        reset,
+        // reset,
         formState: { errors, isSubmitting },
     } = useForm();
 
@@ -43,8 +43,8 @@ const Register = () => {
                             .then(res => {
                                 if (res.data.insertedId) {
 
-                                    console.log('user added to the database');
-                                    reset()
+                                    // console.log('user added to the database');
+                                    // reset()
 
                                     Swal.fire({
                                         icon: "success",
@@ -81,12 +81,6 @@ const Register = () => {
                         </p>
                     </div>
                     <div className="flex-1 flex items-end justify-end">
-                        {/* <Player
-                            autoplay
-                            loop
-                            src={registerAnim}
-                            className="w-72 h-72"
-                        /> */}
                         <img className="w-40 h-40" src={petImg} alt="dog" />
                     </div>
                 </div>

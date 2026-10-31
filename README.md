@@ -71,8 +71,9 @@ pawshome/
 ├── client/                 # React + Vite frontend
 │   ├── src/
 │   │   ├── components/
+│   │   ├── firebase/
 │   │   ├── hooks/          # useAxiosPublic, useAxiosSecure, useAuth
-│   │   ├── layouts/        # MainLayout, DashboardLayout
+│   │   ├── layout/        # MainLayout, DashboardLayout
 │   │   ├── pages/
 │   │   ├── providers/      # AuthProvider
 │   │   ├── routes/         # Router & PrivateRoute
@@ -84,7 +85,6 @@ pawshome/
     └── package.json
 ```
 
-> Adjust folder names to match your actual project.
 
 ---
 

@@ -1,6 +1,15 @@
+
 import { useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FiMoon, FiSun, FiMenu, FiLogOut, FiGrid, FiUser, FiChevronDown } from "react-icons/fi";
+import {
+    FiMoon,
+    FiSun,
+    FiMenu,
+    FiLogOut,
+    FiGrid,
+    FiUser,
+    FiChevronDown,
+} from "react-icons/fi";
 import { FaPaw } from "react-icons/fa";
 import { AuthContext } from "../../../providers/AuthProvider";
 
@@ -8,6 +17,7 @@ const publicLinks = [
     { to: "/", label: "Home" },
     { to: "/pet-listing", label: "Pet listing" },
     { to: "/donation-pets", label: "Donation campaigns" },
+    { to: "/dashboard", label: "Dashboard" },
 ];
 
 const linkStyle = ({ isActive }) =>
@@ -23,11 +33,9 @@ const Navbar = () => {
     const { user, logOut } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const navLinks = user
-        ? [...publicLinks, { to: "/dashboard", label: "Dashboard" }]
-        : publicLinks;
+    // Dashboard is visible to everyone
+    const navLinks = publicLinks;
 
-    // DaisyUI dropdowns stay open while focused, so drop focus after a choice
     const closeDropdown = () => document.activeElement?.blur();
 
     const handleLogout = async () => {
@@ -39,11 +47,12 @@ const Navbar = () => {
             console.error(error);
         }
     };
-// #195f35 #002842
+
     return (
-        <header className="py-4 px-4 md:px-0 ">
+        <header className="py-4 px-4 md:px-0">
             <div className="flex items-center justify-between rounded-full bg-[#14342A] py-2 pl-3 pr-2.5 shadow-lg shadow-[#14342A]/20 sm:pl-4">
-                {/* Left: mobile menu + logo */}
+
+                {/* Left: Mobile menu + Logo */}
                 <div className="flex items-center gap-1">
                     <div className="dropdown">
                         <div
@@ -87,12 +96,16 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                {/* Center: desktop links */}
+                {/* Center: Desktop links */}
                 <nav aria-label="Main" className="hidden lg:block">
                     <ul className="flex items-center gap-1">
                         {navLinks.map(({ to, label }) => (
                             <li key={to}>
-                                <NavLink to={to} end={to === "/"} className={linkStyle}>
+                                <NavLink
+                                    to={to}
+                                    end={to === "/"}
+                                    className={linkStyle}
+                                >
                                     {label}
                                 </NavLink>
                             </li>
@@ -100,7 +113,7 @@ const Navbar = () => {
                     </ul>
                 </nav>
 
-                {/* Right: theme toggle + account */}
+                {/* Right: Theme toggle + Account */}
                 <div className="flex items-center gap-1.5 sm:gap-2">
                     <label
                         className="btn btn-ghost btn-circle btn-sm swap swap-rotate text-white hover:bg-white/10"
@@ -138,6 +151,7 @@ const Navbar = () => {
                                         </div>
                                     )}
                                 </div>
+
                                 <FiChevronDown className="text-white/70" />
                             </div>
 

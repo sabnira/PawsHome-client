@@ -21,7 +21,7 @@ const Login = () => {
     const [disabled, setDisabled] = useState(true);
 
     const from = location.state?.from?.pathname || "/";
-    console.log('state in the location login page', location.state);
+    // console.log('state in the location login page', location.state);
 
     const {
         register,
@@ -180,7 +180,7 @@ const Login = () => {
                                 <LoadCanvasTemplate reloadColor="white"/>
                             </div>
 
-                            <input onBlur={handleValidateCaptcha} type="text" name="captcha" className="input" placeholder="Type the captcha" 
+                            <input onBlur={handleValidateCaptcha} type="text" name="captcha" placeholder="Type the captcha" 
                             className={`input input-sm w-full bg-[#2C2C2E] border text-white placeholder-white/20 rounded-xl focus:outline-none text-sm h-11
                                 `}/>
                             
