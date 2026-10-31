@@ -18,29 +18,29 @@ const PetListing = () => {
 
     return (
         <>
-            <div className="bg-base-200 py-10 px-4 md:px-10">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+            <div className="bg-base-200 py-8 px-4 sm:px-6 md:py-10 md:px-10">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-10 items-center">
 
                     {/* LEFT CONTENT */}
                     <div>
-                        <p className="mb-3">
+                        <p className="mb-3 text-sm sm:text-base">
                             Find your new pet from our animal shelters.
                         </p>
 
-                        <h1 className="text-4xl md:text-5xl font-bold  mb-6 leading-tight">
-                            Adopt Your <span className="text-green-500">Pretty</span> <br /> Friend
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 md:mb-6 leading-tight">
+                            Adopt Your <span className="text-green-700">Pretty</span> <br /> Friend
                         </h1>
 
-                        {/* SEARCH BAR */}
-                        <div className="flex flex-col md:flex-row gap-3 mb-6">
+                        {/* SEARCH BAR: stacked on mobile, one row on wide tablet, stacked in the half-width hero, one row on desktop */}
+                        <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 mb-6">
 
                             {/* CATEGORY */}
-                            <div className="flex items-center gap-2 bg-base-100 rounded-full px-4 border border-gray-300 w-full">
-                                <BiCategory className="text-[#224fb1]"></BiCategory>
+                            <div className="flex items-center gap-2 bg-base-100 rounded-full px-4 h-12 border border-gray-300 w-full min-w-0">
+                                <BiCategory className="text-[#224fb1] shrink-0"></BiCategory>
                                 <select
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
-                                    className="outline-none w-full bg-base-100">
+                                    className="outline-none w-full min-w-0 bg-base-100">
 
                                     <option value="">Select Category</option>
                                     <option value="Dog">Dogs</option>
@@ -58,20 +58,20 @@ const PetListing = () => {
                                 value={searchText}
                                 onChange={(e) => setSearchText(e.target.value)}
                                 placeholder="Search pet by name..."
-                                className="input input-bordered w-full rounded-full"
+                                className="input input-bordered w-full min-w-0 rounded-full"
                             />
 
                             {/* Button */}
                             <button
                                 type="button"
                                 onClick={() => setSearchParams(searchText)}
-                                className="btn bg-green-500 text-white rounded-full px-6">
+                                className="btn bg-[#F7C948] text-black rounded-full px-6 w-full sm:w-auto md:w-full lg:w-auto">
                                 Search <FaSearch />
                             </button>
                         </div>
 
                         {/* CATEGORY */}
-                        <div className="flex gap-8 text-sm">
+                        <div className="flex flex-wrap gap-x-6 gap-y-3 sm:gap-8 text-sm">
 
                             <div className="flex items-center gap-2">
                                 <FaDog className="text-[#224fb1] text-xl" />
@@ -106,22 +106,27 @@ const PetListing = () => {
                         </div>
                     </div>
 
-                    {/* RIGHT IMAGE */}
-                    <div className="relative flex justify-end">
-                        <img src={listBanner} alt="" className="w-125" />
+                    {/* RIGHT IMAGE: smaller and centered on mobile */}
+                    <div className="relative flex justify-center md:justify-end">
+                        <img
+                            src={listBanner}
+                            alt=""
+                            className="w-full max-w-[16rem] sm:max-w-sm md:max-w-none md:w-125"
+                        />
                     </div>
 
                 </div>
             </div>
 
 
-            <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 my-10">
+            {/* 2 columns on mobile and tablet, 3 on desktop */}
+            <div className="max-w-7xl mx-auto grid grid-cols-2 gap-x-3 gap-y-2 px-4 sm:gap-x-6 sm:px-6 lg:grid-cols-3 lg:gap-x-12 lg:px-8 my-8 md:my-10">
                 {
                     pets.map(pet => <PetCart key={pet._id} pet={pet}></PetCart>)
                 }
             </div>
 
-     
+
         </>
     );
 };

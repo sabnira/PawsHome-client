@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
-            <RouterProvider router={router} />
+            <RouterProvider router={router}/>
         </HelmetProvider>
       </QueryClientProvider>
     </AuthProvider>

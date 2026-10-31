@@ -1,4 +1,3 @@
-
 import SectionTitle from "../../../components/SectionTitle";
 import usePets from "../../../hooks/usePets";
 import PetCart from "../../../components/PetCart";
@@ -9,23 +8,28 @@ const FeaturedPets = () => {
 
     const [pets] = usePets();
 
-    const featuredPets = pets.slice(0, 3);
+    const featuredPets = pets.slice(0, 4);
 
     return (
-        <div>
+        <section>
 
-            <SectionTitle
-                title={"Featured Pets"}
-                heading={"Browse a curated selection of pets ready to be adopted. Each one is healthy and eagerly waiting for a forever home filled with care and affection."}
-            ></SectionTitle>
+            <SectionTitle title={"Featured Pets"}></SectionTitle>
 
-            <div className="grid md:grid-cols-3 gap-12">
+            {/* 2 columns on mobile and tablet, 3 on desktop */}
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-12">
                 {
-                    featuredPets.map(pet => <PetCart key={pet._id} pet={pet}></PetCart>)
+                    featuredPets.map((pet, index) => (
+                        <div
+                            key={pet._id}
+                            className={index === 3 ? "contents lg:hidden" : "contents"}
+                        >
+                            <PetCart pet={pet}></PetCart>
+                        </div>
+                    ))
                 }
             </div>
 
-            <div className="flex justify-center">
+            <div className="mt-2 flex justify-center md:mt-4">
 
                 <Link
                     to="/pet-listing"
@@ -37,9 +41,7 @@ const FeaturedPets = () => {
 
             </div>
 
-
-
-        </div>
+        </section>
     );
 };
 
