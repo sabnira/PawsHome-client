@@ -8,10 +8,9 @@
 
 ## 🔗 Live Demo
 
-- **Live Site:** `https://your-live-site-link.com`
-- **Client Repository:** `https://github.com/sabnira/your-client-repo`
-- **Server Repository:** `https://github.com/sabnira/your-server-repo`
-
+- **Live Site:** `https://pawshome-5ed4f.web.app/`
+- **Client Repository:** `https://github.com/sabnira/PawsHome-client`
+- **Server Repository:** `https://github.com/sabnira/PawsHome-server`
 ---
 
 ## ✨ Features
