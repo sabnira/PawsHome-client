@@ -66,7 +66,7 @@ const Testimonials = () => {
    
 
     return (
-        <section className="my-16 md:my-24">
+        <section className="my-24 md:my-24">
             <SectionTitle
                 title={"What People Are Saying"}
                 heading={

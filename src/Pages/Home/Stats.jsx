@@ -116,7 +116,7 @@ const Stats = () => {
     ];
 
     return (
-        <section className="my-16 md:my-30">
+        <section className="my-28 md:my-30">
             <div
                 className="relative isolate overflow-hidden rounded-3xl bg-cover bg-center sm:rounded-[2rem]"
                 style={{ backgroundImage: `url(${statsBg})` }}

@@ -7,7 +7,7 @@ import puppy from "../../assets/puppy.webp";
 
 const AdoptionCTA = () => {
     return (
-        <section className="relative my-16 mt-32 md:my-32 md:mt-80">
+        <section className="relative my-24 mt-56 md:my-32 md:mt-80">
 
             <img
                 src={puppy}

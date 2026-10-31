@@ -17,7 +17,7 @@ const Home = () => {
                 <title>PawsHome | Home</title>
             </Helmet>
             <Banner></Banner>
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-4 md:px-0">
                 <FeaturedPets></FeaturedPets>
                 <WhyPawsHome></WhyPawsHome>
                 <Testimonials></Testimonials>

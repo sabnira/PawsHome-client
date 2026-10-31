@@ -35,7 +35,7 @@ const checklist = [
 
 const WhyPawsHome = () => {
     return (
-        <section className="my-16 md:my-24">
+        <section className="my-24 md:my-24">
             <SectionTitle title={"Why PawsHome?"}></SectionTitle>
 
             <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">

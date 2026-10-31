@@ -7,7 +7,7 @@ const SectionTitle = ({ title }) => {
     const rest = words.join(" ");
 
     return (
-        <header className="mx-auto my-10 max-w-3xl px-4 text-center md:my-24 font-dmSans">
+        <header className="mx-auto my-12 max-w-3xl px-4 text-center md:my-24 font-dmSans">
 
             {/* Small paw mark */}
             <FaPaw

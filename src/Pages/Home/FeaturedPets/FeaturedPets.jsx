@@ -11,7 +11,7 @@ const FeaturedPets = () => {
     const featuredPets = pets.slice(0, 4);
 
     return (
-        <section>
+        <section className="my-24">
 
             <SectionTitle title={"Featured Pets"}></SectionTitle>
 
