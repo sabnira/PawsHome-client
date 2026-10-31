@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@egjs/flicking-plugins": "^4.8.1",
+    "@egjs/react-flicking": "^4.17.1",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@stripe/react-stripe-js": "^6.9.0",
     "@stripe/stripe-js": "^9.15.0",

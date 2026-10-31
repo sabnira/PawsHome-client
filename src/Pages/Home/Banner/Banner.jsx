@@ -106,6 +106,13 @@ const AUTOPLAY_MS = 3000;
 // Slide backgrounds match the banner images, so the photos blend in
 const slides = [
     {
+        lead: "Transform Lives:",
+        tagline: "Choose Adoption, Choose Love!",
+        text: "Make a lasting impact by adopting a rescue pet and be a part of their incredible journey toward a brighter future.",
+        image: banner3,
+        bg: "#FFFFFF",
+    },
+    {
         lead: "Embrace Compassion:",
         tagline: "Rescue a Pet, Change a Life!",
         text: "Make a difference in the world by opening your heart and home to a shelter animal.",
@@ -118,14 +125,8 @@ const slides = [
         text: "Find your perfect companion and bring joy to your home by choosing adoption over buying.",
         image: banner2,
         bg: "#FBEDEC",
-    },
-    {
-        lead: "Transform Lives:",
-        tagline: "Choose Adoption, Choose Love!",
-        text: "Make a lasting impact by adopting a rescue pet and be a part of their incredible journey toward a brighter future.",
-        image: banner3,
-        bg: "#FFFFFF",
-    },
+    }
+ 
 ];
 
 const Banner = () => {

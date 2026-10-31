@@ -40,13 +40,7 @@ const DonationCampaigns = () => {
                 }
             ></SectionTitle>
 
-            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-warning/15 to-base-100 px-4 py-10 sm:px-8 md:py-14">
-
-                {/* Soft decorative glow */}
-                <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-warning/20 blur-3xl"
-                ></div>
+            <div className="relative overflow-hidden">
 
                 <div className="relative">
 
